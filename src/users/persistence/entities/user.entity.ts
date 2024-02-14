@@ -6,7 +6,7 @@ import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 interface IUser {
   email: string;
   password: string;
-  provider?: string;
+  provider?: AuthProvider;
   roleId: number;
 }
 
@@ -20,7 +20,7 @@ export class UserEntity extends BaseEntity {
   public password: string;
 
   @Column({ default: AuthProvider.EMAIL })
-  public provider: string;
+  public provider: AuthProvider;
 
   @Column()
   public roleId: number;

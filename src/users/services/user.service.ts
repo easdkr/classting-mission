@@ -1,7 +1,9 @@
+import { Maybe } from '@classting/common/functional';
+import { EntityCondition } from '@classting/common/types';
 import { checkOrThrow } from '@classting/common/utils';
 import { HashService } from '@classting/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
-import { RoleQueryRepository, UserQueryRepository } from '@classting/users/repositories';
+import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
 import { CreateUserCommand } from '@classting/users/services/dtos/commands';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,5 +34,11 @@ export class UserService {
     });
 
     await this.userRepository.save(user, { reload: false });
+  }
+
+  public async findOne(field: EntityCondition<UserEntity>): Promise<Maybe<UserEntity>> {
+    const user = await this.userQueryRepository.findUnique(field);
+
+    return user;
   }
 }

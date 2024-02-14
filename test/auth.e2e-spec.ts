@@ -1,20 +1,20 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { DataSource } from 'typeorm';
-import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
-import { IBackup, IMemoryDb } from 'pg-mem';
-import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
-import { roleFixture } from '@test/fixtures';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@classting/app.module';
 import { initializeApplication } from '@classting/app.initializer';
-import { CreateUserBody } from '@classting/users/controllers/dtos/requests';
-import { plainToInstance } from 'class-transformer';
+import * as request from 'supertest';
+import { AppModule } from '@classting/app.module';
+import { RoleEntity } from '@classting/users/persistence/entities';
+import { UserService } from '@classting/users/services';
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { roleFixture, userFixture } from '@test/fixtures';
+import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
+import { IMemoryDb, IBackup } from 'pg-mem';
+import { DataSource } from 'typeorm';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;
 let backup: IBackup;
 let moduleFixture: TestingModule;
+let app: INestApplication;
 
 beforeAll(async () => {
   await initializeTest();
@@ -25,8 +25,6 @@ afterAll(async () => {
 });
 
 describe('UserController (e2e)', () => {
-  let app: INestApplication;
-
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
@@ -42,22 +40,20 @@ describe('UserController (e2e)', () => {
     await setupFixture(testDataSource);
   });
 
-  it('(POST) v1/users', async () => {
+  it('(POST) v1/auth/signin', async () => {
+    const endpoint = '/v1/auth/signin';
     // given
-    const body = plainToInstance(CreateUserBody, {
+    const body = {
       email: 'test@test.com',
       password: 'test1@',
-      roleId: 1,
-    });
+    };
 
     // when
-    const res = await request(app.getHttpServer()).post('/v1/users').send(body);
+    const res = await request(app.getHttpServer()).post(endpoint).send(body);
 
     // then
-    expect(res.statusCode).toEqual(HttpStatus.CREATED);
-
-    const createdUser = await testDataSource.manager.findOne(UserEntity, { where: { email: body.email } });
-    expect(createdUser).toBeInstanceOf(UserEntity);
+    expect(res.statusCode).toEqual(201);
+    expect(res.header['set-cookie']).toBeDefined();
   });
 });
 
@@ -76,4 +72,11 @@ async function clearTest() {
 
 async function setupFixture(ds: DataSource) {
   await ds.manager.save(RoleEntity, roleFixture);
+
+  const userService = app.get<UserService>(UserService);
+  await userService.create({
+    email: userFixture[0].email,
+    password: userFixture[0].password,
+    roleId: userFixture[0].roleId,
+  });
 }
