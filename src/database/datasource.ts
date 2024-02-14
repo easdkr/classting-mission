@@ -1,7 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 const entitiesPath = `${__dirname}/../**/*.entity.{js,ts}`;
-console.log(entitiesPath);
 const migrationPath = `${__dirname}/migrations/**/*.{js,ts}`;
 
 export const AppDataSource = new DataSource({

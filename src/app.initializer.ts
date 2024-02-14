@@ -21,19 +21,27 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
   app.enableVersioning({ type: VersioningType.URI });
 
   const configService = app.get(ConfigService<AppEnvironment>);
-  const isProduction = !!configService.getOrThrow<string>('NODE_ENV');
+  const isProduction = configService.get('NODE_ENV') === 'production';
+
   const redisClient = app.get(RedisClient);
 
   const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
+
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
 
   app.use(
     session({
       secret: sessionSecret,
       saveUninitialized: false,
       resave: false,
+      name: '_sid_',
       store: new RedisStore({
         client: redisClient,
       }),
+      proxy: true,
       cookie: {
         httpOnly: true,
         secure: isProduction,
