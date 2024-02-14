@@ -4,8 +4,8 @@ import { ClassSerializerInterceptor, INestApplication, ValidationPipe, Versionin
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppEnvironment } from '@classting/configs';
-import { Redis } from 'ioredis';
 import RedisStore from 'connect-redis';
+import { RedisClient } from '@classting/redis';
 
 export function initializeApplication<T extends INestApplication>(app: T): void {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -22,12 +22,7 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
 
   const configService = app.get(ConfigService<AppEnvironment>);
   const isProduction = !!configService.getOrThrow<string>('NODE_ENV');
-  const redisHost = configService.getOrThrow<string>('REDIS_HOST');
-  const redisPort = configService.getOrThrow<number>('REDIS_PORT');
-  const redisClient = new Redis({
-    host: redisHost,
-    port: redisPort,
-  });
+  const redisClient = app.get(RedisClient);
 
   const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
 
