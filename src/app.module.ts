@@ -6,6 +6,7 @@ import { TypeOrmConfigService } from '@classting/database';
 import { UserModule } from '@classting/users/user.module';
 import { RedisModule } from '@classting/redis';
 import { HashModule } from '@classting/hash';
+import { AuthModule } from '@classting/auth';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HashModule } from '@classting/hash';
     RedisModule,
     HashModule,
     UserModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
