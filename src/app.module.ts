@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '@classting/database';
 import { UserModule } from '@classting/users/user.module';
 import { RedisModule } from '@classting/redis';
+import { HashModule } from '@classting/hash';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RedisModule } from '@classting/redis';
       useClass: TypeOrmConfigService,
     }),
     RedisModule,
+    HashModule,
     UserModule,
   ],
 })
