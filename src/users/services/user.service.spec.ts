@@ -6,7 +6,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateUserCommand } from '@classting/users/services/dtos/commands';
-import { RoleQueryRepository, UserQueryRepository } from '@classting/users/repositories';
+import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
 
 describe('UserService', () => {
   let userService: UserService;
