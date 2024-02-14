@@ -24,7 +24,7 @@ afterAll(async () => {
   await clearTest();
 });
 
-describe('UserController (e2e)', () => {
+describe('AuthController (e2e)', () => {
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
