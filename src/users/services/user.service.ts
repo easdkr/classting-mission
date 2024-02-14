@@ -1,3 +1,5 @@
+import { Maybe } from '@classting/common/functional';
+import { EntityCondition } from '@classting/common/types';
 import { checkOrThrow } from '@classting/common/utils';
 import { HashService } from '@classting/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
@@ -32,5 +34,11 @@ export class UserService {
     });
 
     await this.userRepository.save(user, { reload: false });
+  }
+
+  public async findOne(field: EntityCondition<UserEntity>): Promise<Maybe<UserEntity>> {
+    const user = await this.userQueryRepository.findUnique(field);
+
+    return user;
   }
 }
