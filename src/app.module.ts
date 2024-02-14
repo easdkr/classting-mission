@@ -4,6 +4,7 @@ import { validateEnvironment } from '@classting/configs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '@classting/database';
 import { UserModule } from '@classting/users/user.module';
+import { RedisModule } from '@classting/redis';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from '@classting/users/user.module';
       inject: [ConfigService],
       useClass: TypeOrmConfigService,
     }),
+    RedisModule,
     UserModule,
   ],
 })
