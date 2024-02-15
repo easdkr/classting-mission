@@ -1,7 +1,7 @@
-import { AuthProvider } from '@classting/auth/usecase/enums';
+import { AuthProvider, Role } from '@classting/auth/usecase/enums';
 import { Maybe } from '@libs/functional';
 import { HashService } from '@libs/hash';
-import { UserEntity } from '@classting/users/persistence/entities';
+import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
 import { Test } from '@nestjs/testing';
 import { mockDeep } from 'jest-mock-extended';
 import { AuthService } from '@classting/auth/usecase/services/auth.service';
@@ -37,12 +37,17 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should return true if user is valid', async () => {
       // given
+      const mockRole = new RoleEntity();
+      mockRole.id = 1;
+      mockRole.name = Role.ADMIN;
+
       const mockUser = new UserEntity();
       mockUser.id = 1;
       mockUser.email = 'test@test.com';
       mockUser.password = 'password';
       mockUser.provider = AuthProvider.EMAIL;
-      mockUser.roleId = 1;
+
+      mockUser.role = mockRole;
 
       mockUserService.findOne.mockResolvedValue(Maybe.of(mockUser));
       mockHashService.compare.mockResolvedValue(true);
@@ -54,6 +59,7 @@ describe('AuthService', () => {
       expect(result).toEqual({
         id: 1,
         email: 'test@test.com',
+        role: Role.ADMIN,
       });
     });
   });
