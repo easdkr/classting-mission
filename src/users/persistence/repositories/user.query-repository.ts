@@ -17,7 +17,12 @@ export class UserQueryRepository extends Repository<UserEntity> {
   }
 
   public async findUnique(field: EntityCondition<UserEntity>): Promise<Maybe<UserEntity>> {
-    const queryRes = await this.findOne({ where: field as FindOptionsWhere<UserEntity> });
+    const queryRes = await this.findOne({
+      where: field as FindOptionsWhere<UserEntity>,
+      relations: {
+        role: true,
+      },
+    });
 
     return Maybe.of(queryRes);
   }

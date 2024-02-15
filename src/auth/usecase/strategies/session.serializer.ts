@@ -1,9 +1,11 @@
+import { Role } from '@classting/auth/usecase/enums';
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 
 export interface SessionDeserializedUser {
   id: number;
   email: string;
+  role: Role;
 }
 
 @Injectable()
