@@ -1,11 +1,11 @@
-import { AuthProvider } from '@classting/auth/enums';
-import { AuthService } from '@classting/auth/services/auth.service';
-import { Maybe } from '@classting/common/functional';
-import { HashService } from '@classting/hash';
+import { AuthProvider } from '@classting/auth/usecase/enums';
+import { Maybe } from '@libs/functional';
+import { HashService } from '@libs/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
-import { UserService } from '@classting/users/services';
 import { Test } from '@nestjs/testing';
 import { mockDeep } from 'jest-mock-extended';
+import { AuthService } from '@classting/auth/usecase/services/auth.service';
+import { UserService } from '@classting/users/usecase/services';
 
 describe('AuthService', () => {
   let authService: AuthService;

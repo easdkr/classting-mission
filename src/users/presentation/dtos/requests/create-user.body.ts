@@ -1,4 +1,4 @@
-import { CreateUserCommand } from '@classting/users/services/dtos/commands';
+import { CreateUserCommand } from '@classting/users/usecase/dtos/commands';
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsInt, Length, Matches } from 'class-validator';
 

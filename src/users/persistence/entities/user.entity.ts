@@ -1,5 +1,5 @@
-import { AuthProvider } from '@classting/auth/enums';
-import { BaseEntity } from '@classting/common/persistence/entities';
+import { AuthProvider } from '@classting/auth/usecase/enums';
+import { BaseEntity } from '@libs/database/entities';
 import { RoleEntity } from '@classting/users/persistence/entities';
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 

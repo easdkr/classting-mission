@@ -3,9 +3,9 @@ import * as session from 'express-session';
 import { ClassSerializerInterceptor, INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { AppEnvironment } from '@classting/configs';
+import { AppEnvironment } from '@libs/configs';
 import RedisStore from 'connect-redis';
-import { RedisClient } from '@classting/redis';
+import { RedisClient } from '@libs/redis';
 
 export function initializeApplication<T extends INestApplication>(app: T): void {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

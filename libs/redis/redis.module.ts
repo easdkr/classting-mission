@@ -1,4 +1,4 @@
-import { RedisClient } from '@classting/redis/redis-client';
+import { RedisClient } from '@libs/redis/redis-client';
 import { Global, Module } from '@nestjs/common';
 
 @Global()

@@ -1,13 +1,13 @@
-import { Maybe } from '@classting/common/functional';
-import { EntityCondition } from '@classting/common/types';
-import { checkOrThrow } from '@classting/common/utils';
-import { HashService } from '@classting/hash';
+import { Maybe } from '@libs/functional';
+import { EntityCondition } from '@libs/types';
+import { checkOrThrow } from '@libs/utils';
+import { HashService } from '@libs/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
 import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
-import { CreateUserCommand } from '@classting/users/services/dtos/commands';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateUserCommand } from '@classting/users/usecase/dtos/commands';
 
 @Injectable()
 export class UserService {

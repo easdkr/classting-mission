@@ -8,6 +8,7 @@
   },
   "moduleNameMapper": {
     "^@classting/(.*)$": "<rootDir>/src/$1",
-    "^@test/(.*)$": "<rootDir>/test/$1"
+    "^@test/(.*)$": "<rootDir>/test/$1",
+    "^@libs/(.*)$": "<rootDir>/libs/$1"
   }
 }

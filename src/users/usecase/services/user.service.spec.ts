@@ -1,12 +1,12 @@
-import { HashService } from '@classting/hash';
+import { HashService } from '@libs/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
-import { UserService } from '@classting/users/services/user.service';
 import { Repository } from 'typeorm';
 import { mockDeep } from 'jest-mock-extended';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CreateUserCommand } from '@classting/users/services/dtos/commands';
 import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
+import { UserService } from '@classting/users/usecase/services/user.service';
+import { CreateUserCommand } from '@classting/users/usecase/dtos/commands';
 
 describe('UserService', () => {
   let userService: UserService;
