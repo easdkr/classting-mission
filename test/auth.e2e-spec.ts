@@ -1,4 +1,3 @@
-import { initializeApplication } from '@classting/app.initializer';
 import * as request from 'supertest';
 import { AppModule } from '@classting/app.module';
 import { RoleEntity } from '@classting/users/persistence/entities';
@@ -9,6 +8,7 @@ import { roleFixture, userFixture } from '@test/fixtures';
 import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
 import { IMemoryDb, IBackup } from 'pg-mem';
 import { DataSource } from 'typeorm';
+import { initializeApplication } from '@libs/configs';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;

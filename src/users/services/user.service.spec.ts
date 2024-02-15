@@ -1,4 +1,4 @@
-import { HashService } from '@classting/hash';
+import { HashService } from '@libs/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
 import { UserService } from '@classting/users/services/user.service';
 import { Repository } from 'typeorm';

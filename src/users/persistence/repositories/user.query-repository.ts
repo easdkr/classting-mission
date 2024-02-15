@@ -1,5 +1,5 @@
-import { Maybe } from '@classting/common/functional';
-import { EntityCondition } from '@classting/common/types';
+import { Maybe } from '@libs/functional';
+import { EntityCondition } from '@libs/types';
 import { UserEntity } from '@classting/users/persistence/entities';
 import { Injectable } from '@nestjs/common';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';

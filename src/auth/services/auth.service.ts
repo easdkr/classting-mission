@@ -1,7 +1,7 @@
 import { AuthProvider } from '@classting/auth/enums';
 import { ValidateUserResult } from '@classting/auth/services/dtos/results';
-import { checkOrThrow } from '@classting/common/utils';
-import { HashService } from '@classting/hash';
+import { checkOrThrow } from '@libs/utils';
+import { HashService } from '@libs/hash';
 import { UserService } from '@classting/users/services';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 

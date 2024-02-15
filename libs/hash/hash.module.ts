@@ -1,4 +1,4 @@
-import { HashService } from '@classting/hash/hash.service';
+import { HashService } from '@libs/hash/hash.service';
 import { Global, Module } from '@nestjs/common';
 
 @Global()

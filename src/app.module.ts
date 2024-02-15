@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { validateEnvironment } from '@classting/configs';
+import { validateEnvironment } from '@libs/configs';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '@classting/database';
+import { TypeOrmConfigService } from '@libs/database';
 import { UserModule } from '@classting/users/user.module';
-import { RedisModule } from '@classting/redis';
-import { HashModule } from '@classting/hash';
+import { RedisModule } from '@libs/redis';
+import { HashModule } from '@libs/hash';
 import { AuthModule } from '@classting/auth';
 
 @Module({

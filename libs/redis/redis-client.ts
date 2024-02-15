@@ -1,4 +1,4 @@
-import { AppEnvironment } from '@classting/configs';
+import { AppEnvironment } from '@libs/configs';
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';

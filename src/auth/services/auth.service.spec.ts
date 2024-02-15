@@ -1,7 +1,7 @@
 import { AuthProvider } from '@classting/auth/enums';
 import { AuthService } from '@classting/auth/services/auth.service';
-import { Maybe } from '@classting/common/functional';
-import { HashService } from '@classting/hash';
+import { Maybe } from '@libs/functional';
+import { HashService } from '@libs/hash';
 import { UserEntity } from '@classting/users/persistence/entities';
 import { UserService } from '@classting/users/services';
 import { Test } from '@nestjs/testing';
