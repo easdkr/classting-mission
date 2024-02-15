@@ -1,7 +1,6 @@
 import * as request from 'supertest';
 import { AppModule } from '@classting/app.module';
 import { RoleEntity } from '@classting/users/persistence/entities';
-import { UserService } from '@classting/users/services';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { roleFixture, userFixture } from '@test/fixtures';
@@ -9,6 +8,7 @@ import { createDatabase, createTestDataSource } from '@test/utils/test-datasourc
 import { IMemoryDb, IBackup } from 'pg-mem';
 import { DataSource } from 'typeorm';
 import { initializeApplication } from '@libs/configs';
+import { UserService } from '@classting/users/usecase/services';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;
@@ -72,7 +72,6 @@ async function clearTest() {
 
 async function setupFixture(ds: DataSource) {
   await ds.manager.save(RoleEntity, roleFixture);
-
   const userService = app.get<UserService>(UserService);
   await userService.create({
     email: userFixture[0].email,

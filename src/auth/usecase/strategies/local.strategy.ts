@@ -1,5 +1,5 @@
-import { AuthService } from '@classting/auth/services/auth.service';
-import { ValidateUserResult } from '@classting/auth/services/dtos/results';
+import { AuthService } from '@classting/auth/usecase/services/auth.service';
+import { ValidateUserResult } from '@classting/auth/usecase/dtos/results';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';

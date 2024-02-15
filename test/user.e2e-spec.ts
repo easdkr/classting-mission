@@ -7,9 +7,9 @@ import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
 import { roleFixture } from '@test/fixtures';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@classting/app.module';
-import { CreateUserBody } from '@classting/users/controllers/dtos/requests';
 import { plainToInstance } from 'class-transformer';
 import { initializeApplication } from '@libs/configs';
+import { CreateUserBody } from '@classting/users/presentation/dtos/requests';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;

@@ -1,7 +1,7 @@
-import { UserController } from '@classting/users/controllers/user.controller';
 import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
 import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
-import { UserService } from '@classting/users/services';
+import { UserController } from '@classting/users/presentation/controllers';
+import { UserService } from '@classting/users/usecase/services';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

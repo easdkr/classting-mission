@@ -1,5 +1,5 @@
-import { SignInBody } from '@classting/auth/controllers/dtos/requests';
-import { LocalAuthGuard } from '@classting/auth/controllers/guards';
+import { SignInBody } from '@classting/auth/presentation/dtos/requests';
+import { LocalAuthGuard } from '@classting/auth/presentation/guards';
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 

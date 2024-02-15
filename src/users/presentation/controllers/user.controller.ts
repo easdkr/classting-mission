@@ -1,5 +1,5 @@
-import { CreateUserBody } from '@classting/users/controllers/dtos/requests';
-import { UserService } from '@classting/users/services';
+import { CreateUserBody } from '@classting/users/presentation/dtos/requests';
+import { UserService } from '@classting/users/usecase/services';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
