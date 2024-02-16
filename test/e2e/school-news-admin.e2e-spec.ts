@@ -109,6 +109,89 @@ describe('SchoolNewsAdminController (e2e)', () => {
       expect(res.statusCode).toEqual(HttpStatus.NOT_FOUND);
     });
   });
+
+  describe('(PUT) v1/school-news/:id', () => {
+    const endpoint = '/v1/school-news';
+    let createRes;
+
+    beforeAll(async () => {
+      const body = {
+        title: 'Test news',
+        content: 'Test news content',
+        pageId: 1,
+      };
+
+      createRes = await request(app.getHttpServer()).post(endpoint).set('Cookie', cookie).send(body);
+    });
+
+    it('should update a school news', async () => {
+      // given
+      const updateBody = {
+        title: 'Updated news',
+        content: 'Updated news content',
+        pageId: 1,
+      };
+
+      // when
+      const res = await request(app.getHttpServer())
+        .put(`${endpoint}/${createRes.body.id}`)
+        .set('Cookie', cookie)
+        .send(updateBody);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.OK);
+      expect(res.body).toMatchObject({
+        id: createRes.body.id,
+        title: 'Updated news',
+        content: 'Updated news content',
+        pageId: 1,
+      });
+
+      const schoolNews = await testDataSource.manager.findOne(SchoolNewsEntity, {
+        where: { id: createRes.body.id },
+      });
+
+      expect(schoolNews).toMatchObject({
+        id: createRes.body.id,
+        title: 'Updated news',
+        content: 'Updated news content',
+        pageId: 1,
+      });
+    });
+
+    it('should return 404 when pageId is invalid', async () => {
+      // given
+      const updateBody = {
+        title: 'Updated news',
+        content: 'Updated news content',
+        pageId: 999,
+      };
+
+      // when
+      const res = await request(app.getHttpServer())
+        .put(`${endpoint}/${createRes.body.id}`)
+        .set('Cookie', cookie)
+        .send(updateBody);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.NOT_FOUND);
+    });
+
+    it('should return 404 when news id is invalid', async () => {
+      // given
+      const updateBody = {
+        title: 'Updated news',
+        content: 'Updated news content',
+        pageId: 1,
+      };
+
+      // when
+      const res = await request(app.getHttpServer()).put(`${endpoint}/999`).set('Cookie', cookie).send(updateBody);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.NOT_FOUND);
+    });
+  });
 });
 
 async function initializeTest() {
