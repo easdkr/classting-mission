@@ -13,7 +13,7 @@ export class SchoolPageAdminController {
   public constructor(private readonly schoolPageService: SchoolPageService) {}
 
   @Post()
-  public async createSchoolPage(@Body() body: CreateSchoolPageBody): Promise<CreateSchoolPageResponse> {
+  public async create(@Body() body: CreateSchoolPageBody): Promise<CreateSchoolPageResponse> {
     const command = body.toCommand();
 
     return this.schoolPageService.create(command).then(CreateSchoolPageResponse.fromEntity);
