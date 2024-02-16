@@ -20,19 +20,31 @@ export class SchoolPageSubscriptionService {
   }
 
   public async subscribe(userId: number, pageId: number): Promise<SchoolPageSubscriptionEntity> {
-    const exists = await this.schoolPageSubscriptionQueryRepository.existsByFields({
-      userId,
-      pageId,
-      cancelledAt: null,
-    });
-    checkOrThrow(!exists, new ConflictException('Already subscribed'));
-
     const pageExists = await this.schoolPageService.exists(pageId);
     checkOrThrow(pageExists, new NotFoundException('School page not found'));
 
-    const subscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
+    const subscription = await this.schoolPageSubscriptionQueryRepository.findUnique({
+      userId,
+      pageId,
+    });
 
-    return this.schoolPageSubscriptionRepository.save(subscription);
+    const res = await subscription
+      .map((v) => {
+        if (v.isCancelled()) {
+          v.cancelledAt = null;
+          console.log(v);
+        } else {
+          throw new ConflictException('Already subscribed');
+        }
+        return v;
+      })
+      .map((v) => this.schoolPageSubscriptionRepository.save(v))
+      .getOrExecute(() =>
+        this.schoolPageSubscriptionRepository.save(SchoolPageSubscriptionEntity.from({ userId, pageId })),
+      );
+
+    console.log(res);
+    return res;
   }
 
   public async unsubscribe(userId: number, pageId: number): Promise<boolean> {

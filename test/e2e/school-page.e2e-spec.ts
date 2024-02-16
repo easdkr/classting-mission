@@ -239,6 +239,34 @@ describe('SchoolPageController (e2e)', () => {
       expect(res.statusCode).toEqual(HttpStatus.CONFLICT);
       expect(res.body.message).toEqual('Already subscribed');
     });
+
+    it('should re-subscribe when cancelled', async () => {
+      console.log('should re-subscribe when cancelled');
+      // given
+      // 구독
+      await request(app.getHttpServer()).post('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // 구독 취소
+      await testDataSource.manager.query(
+        `UPDATE school_page_subscriptions SET cancelled_at = NOW() WHERE user_id = 1 AND page_id = 1`,
+      );
+
+      // when
+      const res = await request(app.getHttpServer()).post('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.CREATED);
+      expect(res.body).toMatchObject({
+        userId: 1,
+        pageId: 1,
+      });
+
+      const subscription = await testDataSource.manager.findOne(SchoolPageSubscriptionEntity, {
+        where: { userId: 1, pageId: 1, cancelledAt: IsNull() },
+      });
+
+      expect(subscription).toBeDefined();
+    });
   });
 
   describe('DELETE /v1/school-pages/:id/subscribe', () => {

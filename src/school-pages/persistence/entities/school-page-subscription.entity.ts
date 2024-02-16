@@ -31,6 +31,10 @@ export class SchoolPageSubscriptionEntity extends BaseEntity {
     return entity;
   }
 
+  public isCancelled() {
+    return !!this.cancelledAt;
+  }
+
   public cancel() {
     this.cancelledAt = new Date();
   }

@@ -27,6 +27,10 @@ export class Maybe<T> {
     return this.isNothing() ? defaultValue : (this.#value as T);
   }
 
+  public getOrExecute<U>(fn: () => U): T | U {
+    return this.isNothing() ? fn() : (this.#value as T);
+  }
+
   public getOrThrow<E extends Error>(error: E): T {
     if (this.isNothing()) throw error;
 

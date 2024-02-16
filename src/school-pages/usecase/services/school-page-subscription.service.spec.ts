@@ -1,6 +1,7 @@
 import { SchoolPageSubscriptionEntity } from '@classting/school-pages/persistence/entities';
 import { SchoolPageSubscriptionQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { SchoolPageSubscriptionService } from '@classting/school-pages/usecase/services/school-page-subscription.service';
+import { SchoolPageService } from '@classting/school-pages/usecase/services/school-page.service';
 import { Maybe } from '@libs/functional';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -11,7 +12,7 @@ describe('SchoolPageSubscriptionService', () => {
   let service: SchoolPageSubscriptionService;
   const mockSchoolPageSubscriptionRepository = mockDeep<Repository<SchoolPageSubscriptionEntity>>();
   const mockSchoolPageSubscriptionQueryRepository = mockDeep<SchoolPageSubscriptionQueryRepository>();
-
+  const mockSchoolPageService = mockDeep<SchoolPageService>();
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -24,6 +25,10 @@ describe('SchoolPageSubscriptionService', () => {
           provide: SchoolPageSubscriptionQueryRepository,
           useValue: mockSchoolPageSubscriptionQueryRepository,
         },
+        {
+          provide: SchoolPageService,
+          useValue: mockSchoolPageService,
+        },
       ],
     }).compile();
 
@@ -35,14 +40,15 @@ describe('SchoolPageSubscriptionService', () => {
   });
 
   describe('subscribe', () => {
-    it('should subscribe', async () => {
+    it('첫 시도 시 정상적으로 구독이 성공해야 한다.', async () => {
       // given
       const userId = 1;
       const pageId = 1;
-      mockSchoolPageSubscriptionQueryRepository.existsByFields.mockResolvedValueOnce(false);
-      mockSchoolPageSubscriptionRepository.save.mockResolvedValueOnce(
-        SchoolPageSubscriptionEntity.from({ userId, pageId }),
-      );
+      const mockSubscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
+
+      mockSchoolPageService.exists.mockResolvedValueOnce(true);
+      mockSchoolPageSubscriptionQueryRepository.findUnique.mockResolvedValueOnce(Maybe.nothing());
+      mockSchoolPageSubscriptionRepository.save.mockResolvedValueOnce(mockSubscription);
 
       // when
       const received = await service.subscribe(userId, pageId);
@@ -51,12 +57,50 @@ describe('SchoolPageSubscriptionService', () => {
       expect(received).toMatchObject({ userId, pageId });
     });
 
-    it('should throw ConflictException when already subscribed', async () => {
+    it('이미 구독 중이라면 에러를 던져야 한다.', async () => {
+      // given
       const userId = 1;
       const pageId = 1;
-      mockSchoolPageSubscriptionQueryRepository.existsByFields.mockResolvedValue(true);
+      const mockSubscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
+      mockSchoolPageService.exists.mockResolvedValueOnce(true);
+      mockSchoolPageSubscriptionQueryRepository.findUnique.mockResolvedValueOnce(Maybe.of(mockSubscription));
 
-      await expect(service.subscribe(userId, pageId)).rejects.toThrow('Already subscribed');
+      // when
+      const received = service.subscribe(userId, pageId);
+
+      // then
+      await expect(received).rejects.toThrow('Already subscribed');
+    });
+
+    it('해당 페이지가 존재하지 않는다면 에러를 던져야 한다.', async () => {
+      // given
+      const userId = 1;
+      const pageId = 1;
+      mockSchoolPageService.exists.mockResolvedValueOnce(false);
+
+      // when
+      const received = service.subscribe(userId, pageId);
+
+      // then
+      await expect(received).rejects.toThrow('School page not found');
+    });
+
+    it('구독이 취소된 경우 다시 구독이 가능해야 한다.', async () => {
+      // given
+      const userId = 1;
+      const pageId = 1;
+      const mockSubscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
+      mockSubscription.cancel(); // 구독 취소
+
+      mockSchoolPageService.exists.mockResolvedValueOnce(true);
+      mockSchoolPageSubscriptionQueryRepository.findUnique.mockResolvedValueOnce(Maybe.of(mockSubscription));
+      mockSchoolPageSubscriptionRepository.save.mockResolvedValueOnce(mockSubscription);
+
+      // when
+      const received = await service.subscribe(userId, pageId);
+
+      // then
+      expect(received).toMatchObject({ userId, pageId, cancelledAt: null });
     });
   });
 
