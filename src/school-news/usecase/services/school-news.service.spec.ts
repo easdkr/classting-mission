@@ -137,4 +137,30 @@ describe('SchoolNewsService', () => {
       await expect(received).rejects.toThrow();
     });
   });
+
+  describe('delete', () => {
+    it('should delete a school news', async () => {
+      // given
+      const id = 1;
+      mockSchoolNewsRepository.delete.mockResolvedValueOnce({ affected: 1, raw: [] });
+
+      // when
+      const result = await service.delete(id);
+
+      // then
+      expect(result).toBe(true);
+    });
+
+    it('should not delete a school news', async () => {
+      // given
+      const id = 1;
+      mockSchoolNewsRepository.delete.mockResolvedValueOnce({ affected: 0, raw: [] });
+
+      // when
+      const result = await service.delete(id);
+
+      // then
+      expect(result).toBe(false);
+    });
+  });
 });

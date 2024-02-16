@@ -42,4 +42,10 @@ export class SchoolNewsService {
 
     return this.schoolNewsRepository.save(schoolNews);
   }
+
+  public async delete(id: number): Promise<boolean> {
+    const deleteRes = await this.schoolNewsRepository.delete({ id });
+
+    return deleteRes.affected === 1;
+  }
 }
