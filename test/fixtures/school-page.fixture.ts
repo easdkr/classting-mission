@@ -8,4 +8,14 @@ export const schoolPageFixture: DeepPartial<SchoolPageEntity>[] = [
     city: City.SEOUL,
     name: 'Test School 1',
   },
+  {
+    id: 2,
+    city: City.BUSAN,
+    name: 'Test School 2',
+  },
+  {
+    id: 3,
+    city: City.DAEGU,
+    name: 'Test School 3',
+  },
 ];
