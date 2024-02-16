@@ -18,6 +18,23 @@ yarn test
 
 2. e2e 테스트
 
+- .env.test 파일 생성
+
+```bash
+# .env.test 예시
+APP_PORT=3000
+DATABASE_HOST=localhost
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_PORT=5432
+DATABASE_NAME=develop
+SESSION_SECRET=secret
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+- 실행
+
 ```bash
 yarn test:e2e
 ```
