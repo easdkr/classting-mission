@@ -30,4 +30,8 @@ export class SchoolPageService {
 
     return schoolPage;
   }
+
+  public async exists(id: number): Promise<boolean> {
+    return this.schoolPageQueryRepository.existsById(id);
+  }
 }
