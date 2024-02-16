@@ -1,19 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { initializeApplication } from '@classting/app.initializer';
 import { ConfigService } from '@nestjs/config';
-import { AppEnvironment } from '@classting/configs';
+import { AppEnvironment, initializeApplication } from '@libs/configs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   initializeApplication(app);
+  initializeOpenApi(app);
 
   const configService = app.get(ConfigService<AppEnvironment>);
   const port = configService.get('APP_PORT');
-
-  initializeOpenApi(app);
   await app.listen(port);
 }
 bootstrap();

@@ -5,6 +5,7 @@ import { IsEnum, IsInt, IsString, validateSync } from 'class-validator';
 enum Environment {
   DEV = 'development',
   PROD = 'production',
+  TEST = 'test',
 }
 
 export class AppEnvironment {

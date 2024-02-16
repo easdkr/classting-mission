@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { join as pathJoin } from 'path';
-import { AppEnvironment } from '@classting/configs';
+import { AppEnvironment } from '@libs/configs';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

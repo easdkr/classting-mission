@@ -13,7 +13,8 @@
     "rootDir": ".",
     "paths": {
       "@classting/*": ["src/*"],
-      "@test/*": ["test/*"]
+      "@test/*": ["test/*"],
+      "@libs/*": ["libs/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

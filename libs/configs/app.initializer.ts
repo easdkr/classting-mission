@@ -3,9 +3,9 @@ import * as session from 'express-session';
 import { ClassSerializerInterceptor, INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { AppEnvironment } from '@classting/configs';
-import { Redis } from 'ioredis';
+import { AppEnvironment } from '@libs/configs';
 import RedisStore from 'connect-redis';
+import { RedisClient } from '@libs/redis';
 
 export function initializeApplication<T extends INestApplication>(app: T): void {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -21,24 +21,27 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
   app.enableVersioning({ type: VersioningType.URI });
 
   const configService = app.get(ConfigService<AppEnvironment>);
-  const isProduction = !!configService.getOrThrow<string>('NODE_ENV');
-  const redisHost = configService.getOrThrow<string>('REDIS_HOST');
-  const redisPort = configService.getOrThrow<number>('REDIS_PORT');
-  const redisClient = new Redis({
-    host: redisHost,
-    port: redisPort,
-  });
+  const isProduction = configService.get('NODE_ENV') === 'production';
+
+  const redisClient = app.get(RedisClient);
 
   const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
+
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
 
   app.use(
     session({
       secret: sessionSecret,
       saveUninitialized: false,
       resave: false,
+      name: '_sid_',
       store: new RedisStore({
         client: redisClient,
       }),
+      proxy: true,
       cookie: {
         httpOnly: true,
         secure: isProduction,
