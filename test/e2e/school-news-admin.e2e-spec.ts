@@ -192,6 +192,43 @@ describe('SchoolNewsAdminController (e2e)', () => {
       expect(res.statusCode).toEqual(HttpStatus.NOT_FOUND);
     });
   });
+
+  describe('(DELETE) v1/school-news/:id', () => {
+    const endpoint = '/v1/school-news';
+    let createRes;
+
+    beforeAll(async () => {
+      const body = {
+        title: 'Test news',
+        content: 'Test news content',
+        pageId: 1,
+      };
+
+      createRes = await request(app.getHttpServer()).post(endpoint).set('Cookie', cookie).send(body);
+    });
+
+    it('should delete a school news', async () => {
+      // when
+      const res = await request(app.getHttpServer()).delete(`${endpoint}/${createRes.body.id}`).set('Cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.OK);
+      expect(res.text).toEqual('true');
+      const schoolNews = await testDataSource.manager.findOne(SchoolNewsEntity, {
+        where: { id: createRes.body.id },
+      });
+
+      expect(schoolNews).toBeNull();
+    });
+
+    it('should return 404 when news id is invalid', async () => {
+      // when
+      const res = await request(app.getHttpServer()).delete(`${endpoint}/999`).set('Cookie', cookie);
+
+      // then
+      expect(res.text).toEqual('false');
+    });
+  });
 });
 
 async function initializeTest() {

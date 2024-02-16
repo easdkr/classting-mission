@@ -5,7 +5,7 @@ import { CreateSchoolNewsResponse } from '@classting/school-news/presentation/dt
 import { UpdateSchoolNewsResponse } from '@classting/school-news/presentation/dtos/responses/update-school-news.response';
 import { SchoolNewsService } from '@classting/school-news/usecase/services';
 import { UseRole } from '@libs/decorators/role.decorator';
-import { Body, Controller, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('School News Admin')
@@ -32,5 +32,10 @@ export class SchoolNewsAdminController {
     const schoolNews = await this.schoolNewsService.update(id, command);
 
     return UpdateSchoolNewsResponse.fromEntity(schoolNews);
+  }
+
+  @Delete(':id')
+  public async delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
+    return this.schoolNewsService.delete(id);
   }
 }
