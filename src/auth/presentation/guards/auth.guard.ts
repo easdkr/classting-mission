@@ -9,10 +9,8 @@ export class AuthGuard implements CanActivate {
     const authorized = await request.isAuthenticated();
 
     if (!authorized) {
-      response.cookie('_sid_', '', {
-        maxAge: 0,
-      });
-      console.log('Unauthorized');
+      response.cookie('_sid_', '', { maxAge: 0 });
+
       return false;
     }
 
