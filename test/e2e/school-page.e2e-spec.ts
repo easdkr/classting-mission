@@ -1,0 +1,159 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { DataSource } from 'typeorm';
+import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
+import { IBackup, IMemoryDb } from 'pg-mem';
+import { RoleEntity } from '@classting/users/persistence/entities';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '@classting/app.module';
+import { initializeApplication } from '@libs/configs';
+import { UserService } from '@classting/users/usecase/services';
+import { memberUserFixture, roleFixture } from '@test/fixtures';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { City } from '@classting/school-pages/usecase/enums';
+
+let memDB: IMemoryDb;
+let testDataSource: DataSource;
+let backup: IBackup;
+let moduleFixture: TestingModule;
+let app: INestApplication;
+
+beforeAll(async () => {
+  await initializeTest();
+});
+
+afterAll(async () => {
+  await clearTest();
+});
+
+describe('SchoolPageController (e2e)', () => {
+  let cookie: string;
+
+  beforeAll(async () => {
+    moduleFixture = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(DataSource)
+      .useValue(testDataSource)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+
+    initializeApplication(app);
+    await app.init();
+    await setupFixture(testDataSource);
+  });
+
+  beforeAll(async () => {
+    // given
+    const body = {
+      email: memberUserFixture[0].email,
+      password: memberUserFixture[0].password,
+    };
+
+    // when
+    const res = await request(app.getHttpServer()).post('/v1/auth/signin').send(body);
+
+    // then
+    expect(res.statusCode).toEqual(HttpStatus.CREATED);
+    cookie = res.header['set-cookie'];
+  });
+
+  describe('GET /v1/school-pages', () => {
+    describe('without data', () => {
+      it('', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages')
+          .query({
+            limit: 20,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toBeUndefined();
+        expect(res.body.items).toHaveLength(0);
+      });
+    });
+
+    describe('with data', () => {
+      beforeAll(async () => {
+        const schoolPages = Array.from({ length: 20 }, (_, i) =>
+          SchoolPageEntity.from({ name: `school-name-${i}`, city: i % 2 ? City.SEOUL : City.BUSAN }),
+        );
+        await testDataSource.manager.save(SchoolPageEntity, schoolPages);
+      });
+
+      it('(LIST) without cursor param', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages')
+          .query({
+            limit: 10,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toEqual(10);
+        expect(res.body.items).toHaveLength(10);
+      });
+
+      it('(LIST) with cursor param', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages')
+          .query({
+            limit: 10,
+            cursor: 10,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toBeUndefined();
+        expect(res.body.items).toHaveLength(10);
+      });
+
+      it('(LIST) with cursor param (last page)', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages')
+          .query({
+            limit: 10,
+            cursor: 20,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toBeUndefined();
+        expect(res.body.items).toHaveLength(0);
+      });
+    });
+  });
+});
+
+async function initializeTest() {
+  memDB = createDatabase();
+  testDataSource = await createTestDataSource(memDB);
+  await testDataSource.initialize();
+  backup = memDB.backup();
+}
+
+async function clearTest() {
+  backup.restore();
+  await testDataSource.destroy();
+  moduleFixture.close();
+}
+
+async function setupFixture(ds: DataSource) {
+  await ds.manager.save(RoleEntity, roleFixture);
+  const userService = app.get<UserService>(UserService);
+  await userService.create({
+    email: memberUserFixture[0].email,
+    password: memberUserFixture[0].password,
+    roleId: memberUserFixture[0].roleId,
+  });
+}
