@@ -1,6 +1,6 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
 import { Maybe } from '@libs/functional';
-import { EntityCondition } from '@libs/types';
+import { CursorResult, EntityCondition } from '@libs/types';
 import { Injectable } from '@nestjs/common';
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
@@ -22,5 +22,24 @@ export class SchoolPageQueryRepository extends Repository<SchoolPageEntity> {
     const queryRes = await this.findOne({ where: field as FindOptionsWhere<SchoolPageEntity>, select: { id: true } });
 
     return !!queryRes;
+  }
+
+  /**
+   * @returns [SchoolPageEntity[], nextCursor]
+   */
+  public async findMany(options: {
+    limit: number;
+    cursor?: number;
+    field?: EntityCondition<SchoolPageEntity>;
+  }): Promise<CursorResult<SchoolPageEntity>> {
+    const query = this.createQueryBuilder('sp')
+      .limit(options.limit + 1)
+      .andWhere(options.cursor ? 'sp.id > :cursor' : '1=1', { cursor: options.cursor });
+    if (options.field) query.andWhere(options.field);
+
+    const queryRes = await query.orderBy('id', 'DESC').getMany();
+    const nextCursor = queryRes.length === options.limit + 1 ? queryRes.pop().id : undefined;
+
+    return [queryRes, nextCursor];
   }
 }

@@ -2,6 +2,7 @@ import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { CreateSchoolPageCommand } from '@classting/school-pages/usecase/dtos/commands';
 import { Maybe } from '@libs/functional';
+import { CursorResult } from '@libs/types';
 import { checkOrThrow } from '@libs/utils';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,6 +34,12 @@ export class SchoolPageService {
     const schoolPage = await this.schoolPageQueryRepository.findUnique({ id });
 
     return schoolPage;
+  }
+
+  public async findMany(limit: number, cursor?: number): Promise<CursorResult<SchoolPageEntity>> {
+    const [schoolPages, nextCursor] = await this.schoolPageQueryRepository.findMany({ limit, cursor });
+
+    return [schoolPages, nextCursor];
   }
 
   public async exists(id: number): Promise<boolean> {
