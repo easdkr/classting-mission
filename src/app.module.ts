@@ -7,6 +7,7 @@ import { RedisModule } from '@libs/redis';
 import { HashModule } from '@libs/hash';
 import { UserModule } from '@classting/users';
 import { AuthModule } from '@classting/auth';
+import { SchoolPageModule } from '@classting/school-pages';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from '@classting/auth';
     HashModule,
     UserModule,
     AuthModule,
+    SchoolPageModule,
   ],
 })
 export class AppModule {}

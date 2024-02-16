@@ -1,4 +1,4 @@
-import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
@@ -8,10 +8,8 @@ import { roleFixture, userFixture } from '@test/fixtures';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@classting/app.module';
 import { initializeApplication } from '@libs/configs';
-import { RoleGuard } from '@classting/auth/presentation/guards';
 import { UserService } from '@classting/users/usecase/services';
-import { UseRole } from '@libs/decorators/role.decorator';
-import { Role } from '@classting/auth/usecase/enums';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;
@@ -27,21 +25,10 @@ afterAll(async () => {
   await clearTest();
 });
 
-describe('RoleGuard (integration)', () => {
-  @Controller({ path: 'tests', version: '1' })
-  @UseRole(Role.ADMIN)
-  class TestController {
-    @Get()
-    @UseGuards(RoleGuard)
-    test() {
-      return 'ok';
-    }
-  }
-
+describe('SchoolPageAdminController (e2e)', () => {
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-      controllers: [TestController],
     })
       .overrideProvider(DataSource)
       .useValue(testDataSource)
@@ -54,21 +41,32 @@ describe('RoleGuard (integration)', () => {
     await setupFixture(testDataSource);
   });
 
-  it('should return 200 when authenticated', async () => {
-    const endpoint = '/v1/auth/signin';
+  it('(POST) v1/school-pages', async () => {
     // given
     const body = {
-      email: 'test@test.com',
-      password: 'test1@',
+      city: 'Seoul',
+      name: 'Test School',
     };
-    const signinRes = await request(app.getHttpServer()).post(endpoint).send(body);
-    const cookie = signinRes.header['set-cookie'];
 
     // when
-    const res = await request(app.getHttpServer()).get('/v1/tests').set('Cookie', cookie);
+    const res = await request(app.getHttpServer()).post('/v1/school-pages').send(body);
 
     // then
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(HttpStatus.CREATED);
+    expect(res.body).toMatchObject({
+      id: expect.any(Number),
+      city: 'Seoul',
+      name: 'Test School',
+    });
+
+    const schoolPage = await testDataSource.manager.findOne(SchoolPageEntity, {
+      where: { id: res.body.id },
+    });
+
+    expect(schoolPage).toMatchObject({
+      city: 'Seoul',
+      name: 'Test School',
+    });
   });
 });
 
@@ -91,6 +89,6 @@ async function setupFixture(ds: DataSource) {
   await userService.create({
     email: userFixture[0].email,
     password: userFixture[0].password,
-    roleId: 1,
+    roleId: userFixture[0].roleId,
   });
 }
