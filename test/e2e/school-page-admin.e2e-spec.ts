@@ -91,7 +91,7 @@ describe('SchoolPageAdminController (e2e)', () => {
     // given
     const schoolPage = await testDataSource.manager.save(SchoolPageEntity, {
       city: City.SEOUL,
-      name: 'Test School',
+      name: 'Test School2',
     });
 
     // when

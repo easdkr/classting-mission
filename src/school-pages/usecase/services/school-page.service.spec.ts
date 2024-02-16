@@ -51,6 +51,21 @@ describe('SchoolPageService', () => {
       // then
       expect(result).toEqual(schoolPage);
     });
+
+    it('should not create a school page if already exists (city, name)', async () => {
+      // given
+      const command = {
+        city: City.SEOUL,
+        name: 'school',
+      };
+      mockSchoolPageQueryRepository.existsByFields.mockResolvedValueOnce(true);
+
+      // when
+      const receive = service.create(command);
+
+      // then
+      expect(receive).rejects.toThrowError('School page already exists');
+    });
   });
 
   describe('delete', () => {

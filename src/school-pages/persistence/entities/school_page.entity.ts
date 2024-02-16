@@ -1,6 +1,6 @@
 import { City } from '@classting/school-pages/usecase/enums';
 import { BaseEntity } from '@libs/database/entities';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, Unique } from 'typeorm';
 
 interface ISchoolPage {
   city: City;
@@ -8,6 +8,7 @@ interface ISchoolPage {
 }
 
 @Entity('school_pages')
+@Unique(['city', 'name'])
 export class SchoolPageEntity extends BaseEntity {
   @Column()
   city: City;
