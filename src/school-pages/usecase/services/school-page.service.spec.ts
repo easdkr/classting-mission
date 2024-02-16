@@ -1,4 +1,5 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { City } from '@classting/school-pages/usecase/enums';
 import { SchoolPageService } from '@classting/school-pages/usecase/services/school-page.service';
 import { TestingModule, Test } from '@nestjs/testing';
@@ -9,6 +10,7 @@ import { Repository } from 'typeorm';
 describe('SchoolPageService', () => {
   let service: SchoolPageService;
   const schoolPageRepository = mockDeep<Repository<SchoolPageEntity>>();
+  const mockSchoolPageQueryRepository = mockDeep<SchoolPageQueryRepository>();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,6 +19,10 @@ describe('SchoolPageService', () => {
         {
           provide: getRepositoryToken(SchoolPageEntity),
           useValue: schoolPageRepository,
+        },
+        {
+          provide: SchoolPageQueryRepository,
+          useValue: mockSchoolPageQueryRepository,
         },
       ],
     }).compile();
