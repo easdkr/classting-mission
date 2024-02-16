@@ -1,6 +1,10 @@
 import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 import { SchoolNewsQueryRepository } from '@classting/school-news/persistence/repositories';
-import { CreateSchoolNewsCommand, UpdateSchoolNewsCommand } from '@classting/school-news/usecase/dtos/commands';
+import {
+  CreateSchoolNewsCommand,
+  FindManySchoolNewsByPageCommand,
+  UpdateSchoolNewsCommand,
+} from '@classting/school-news/usecase/dtos/commands';
 import { SchoolPageService } from '@classting/school-pages/usecase/services';
 import { checkOrThrow } from '@libs/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -47,5 +51,15 @@ export class SchoolNewsService {
     const deleteRes = await this.schoolNewsRepository.delete({ id });
 
     return deleteRes.affected === 1;
+  }
+
+  public async findManyByPage(commands: FindManySchoolNewsByPageCommand) {
+    const [schoolNews, nextCursor] = await this.schoolNewsQueryRepository.findMany({
+      limit: commands.limit,
+      cursor: commands.cursor,
+      field: { pageId: commands.pageId },
+    });
+
+    return [schoolNews, nextCursor];
   }
 }
