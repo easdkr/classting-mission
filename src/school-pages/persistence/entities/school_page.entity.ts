@@ -1,4 +1,4 @@
-import { City } from '@classting/school_pages/usecase/enums';
+import { City } from '@classting/school-pages/usecase/enums';
 import { BaseEntity } from '@libs/database/entities';
 import { Column, Entity } from 'typeorm';
 

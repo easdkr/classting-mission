@@ -1,6 +1,6 @@
-import { SchoolPageEntity } from '@classting/school_pages/persistence/entities';
-import { City } from '@classting/school_pages/usecase/enums';
-import { SchoolPageService } from '@classting/school_pages/usecase/services/school-page.service';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { City } from '@classting/school-pages/usecase/enums';
+import { SchoolPageService } from '@classting/school-pages/usecase/services/school-page.service';
 import { TestingModule, Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { mockDeep } from 'jest-mock-extended';

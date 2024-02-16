@@ -1,4 +1,4 @@
-import { City } from '@classting/school_pages/usecase/enums';
+import { City } from '@classting/school-pages/usecase/enums';
 
 export interface CreateSchoolPageCommand {
   readonly name: string;
