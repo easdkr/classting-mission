@@ -19,33 +19,32 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
 
   app.enableShutdownHooks();
   app.enableVersioning({ type: VersioningType.URI });
-
-  const configService = app.get(ConfigService<AppEnvironment>);
-  const isProduction = configService.get('NODE_ENV') === 'production';
-
-  const redisClient = app.get(RedisClient);
-
-  const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
-
   app.enableCors({
     origin: '*',
     credentials: true,
   });
+
+  const configService = app.get(ConfigService<AppEnvironment>);
+  const isProduction = configService.get('NODE_ENV') === 'production';
+  const isTest = configService.get('NODE_ENV') === 'test';
+
+  const sessionName = '_sid_';
+  const sessionStore = isTest ? new session.MemoryStore() : new RedisStore({ client: app.get(RedisClient) });
+  const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
+  const cookieMaxAge = 7 * 24 * 60 * 60 * 1000; // 7d;
 
   app.use(
     session({
       secret: sessionSecret,
       saveUninitialized: false,
       resave: false,
-      name: '_sid_',
-      store: new RedisStore({
-        client: redisClient,
-      }),
+      name: sessionName,
+      store: sessionStore,
       proxy: true,
       cookie: {
         httpOnly: true,
         secure: isProduction,
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+        maxAge: cookieMaxAge, // 7d
       },
     } as session.SessionOptions),
   );

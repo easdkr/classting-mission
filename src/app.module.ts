@@ -9,6 +9,9 @@ import { UserModule } from '@classting/users';
 import { AuthModule } from '@classting/auth';
 import { SchoolPageModule } from '@classting/school-pages';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const productionDependencies = isProduction ? [RedisModule] : [];
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,7 +23,7 @@ import { SchoolPageModule } from '@classting/school-pages';
       inject: [ConfigService],
       useClass: TypeOrmConfigService,
     }),
-    RedisModule,
+    ...productionDependencies,
     HashModule,
     UserModule,
     AuthModule,
