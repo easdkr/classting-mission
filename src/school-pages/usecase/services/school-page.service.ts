@@ -15,4 +15,10 @@ export class SchoolPageService {
 
     return this.schoolPageRepository.save(schoolPage);
   }
+
+  public async delete(id: number): Promise<boolean> {
+    const deleteRes = await this.schoolPageRepository.delete({ id });
+
+    return deleteRes.affected === 1;
+  }
 }
