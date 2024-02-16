@@ -22,11 +22,11 @@ export class UserEntity extends BaseEntity {
   @Column({ default: AuthProvider.EMAIL })
   public provider: AuthProvider;
 
-  @Column()
+  @Column({ name: 'role_id' })
   public roleId: number;
 
   @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'roleId' })
+  @JoinColumn({ name: 'role_id' })
   public role: RoleEntity;
 
   public static from(params: IUser) {

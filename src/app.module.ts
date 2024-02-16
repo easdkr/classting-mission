@@ -8,9 +8,10 @@ import { HashModule } from '@libs/hash';
 import { UserModule } from '@classting/users';
 import { AuthModule } from '@classting/auth';
 import { SchoolPageModule } from '@classting/school-pages';
+import { SchoolNewsModule } from '@classting/school-news';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const productionDependencies = isProduction ? [RedisModule] : [];
+const isProductionOrDevelopment = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development';
+const prodOrDevDependencies = isProductionOrDevelopment ? [RedisModule] : [];
 
 @Module({
   imports: [
@@ -23,11 +24,12 @@ const productionDependencies = isProduction ? [RedisModule] : [];
       inject: [ConfigService],
       useClass: TypeOrmConfigService,
     }),
-    ...productionDependencies,
+    ...prodOrDevDependencies,
     HashModule,
     UserModule,
     AuthModule,
     SchoolPageModule,
+    SchoolNewsModule,
   ],
 })
 export class AppModule {}
