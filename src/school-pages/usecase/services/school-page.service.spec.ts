@@ -32,7 +32,7 @@ describe('SchoolPageService', () => {
     it('should create a school page', async () => {
       // given
       const command = {
-        city: City.Seoul,
+        city: City.SEOUL,
         name: 'school',
       };
 
