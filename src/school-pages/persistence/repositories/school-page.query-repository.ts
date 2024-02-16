@@ -18,8 +18,8 @@ export class SchoolPageQueryRepository extends Repository<SchoolPageEntity> {
     return Maybe.of(queryRes);
   }
 
-  public async existsById(id: number): Promise<boolean> {
-    const queryRes = await this.findOne({ where: { id } });
+  public async existsByFields(field: EntityCondition<SchoolPageEntity>): Promise<boolean> {
+    const queryRes = await this.findOne({ where: field as FindOptionsWhere<SchoolPageEntity>, select: { id: true } });
 
     return !!queryRes;
   }

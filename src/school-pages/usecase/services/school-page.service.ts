@@ -2,7 +2,8 @@ import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { CreateSchoolPageCommand } from '@classting/school-pages/usecase/dtos/commands';
 import { Maybe } from '@libs/functional';
-import { Injectable } from '@nestjs/common';
+import { checkOrThrow } from '@libs/utils';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,6 +15,9 @@ export class SchoolPageService {
   ) {}
 
   public async create(command: CreateSchoolPageCommand): Promise<SchoolPageEntity> {
+    const exists = await this.schoolPageQueryRepository.existsByFields({ city: command.city, name: command.name });
+    checkOrThrow(!exists, new ConflictException('School page already exists'));
+
     const schoolPage = SchoolPageEntity.from(command);
 
     return this.schoolPageRepository.save(schoolPage);
@@ -32,6 +36,6 @@ export class SchoolPageService {
   }
 
   public async exists(id: number): Promise<boolean> {
-    return this.schoolPageQueryRepository.existsById(id);
+    return this.schoolPageQueryRepository.existsByFields({ id });
   }
 }
