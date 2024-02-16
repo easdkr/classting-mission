@@ -47,16 +47,16 @@ export class SchoolNewsQueryRepository extends Repository<SchoolNewsEntity> {
       .leftJoin('sn.page', 'sp')
       .leftJoin('sp.subscriptions', 'sub')
       .where('sub.userId = :userId', { userId: options.userId })
-      .andWhere('sub.created_at <= sn.created_at')
+      .andWhere('sub.createdAt <= sn.createdAt')
       .andWhere(options.cursor ? 'sn.id <= :cursor' : '1=1', { cursor: options.cursor })
       .orderBy('sn.id', 'DESC')
       .limit(options.limit + 1);
 
     if (!options.includeCancelled) {
-      subQuery.andWhere('sub.cancelled_at IS NULL');
+      subQuery.andWhere('sub.cancelledAt IS NULL');
     } else {
       subQuery.andWhere(
-        new Brackets((qb) => qb.orWhere('sub.cancelled_at IS NULL').orWhere('sub.cancelled_at > sn.created_at')),
+        new Brackets((qb) => qb.orWhere('sub.cancelledAt IS NULL').orWhere('sub.cancelledAt >= sn.createdAt')),
       );
     }
 

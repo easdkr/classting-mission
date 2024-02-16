@@ -113,8 +113,7 @@ describe('SchoolNewsController (e2e)', () => {
           .query({
             limit: 10,
           })
-          .set('Cookie', cookie)
-          .send();
+          .set('Cookie', cookie);
 
         // then
         expect(res.statusCode).toEqual(HttpStatus.OK);
