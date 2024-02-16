@@ -27,6 +27,8 @@ afterAll(async () => {
 });
 
 describe('SchoolPageAdminController (e2e)', () => {
+  let cookie: string;
+
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
@@ -42,6 +44,21 @@ describe('SchoolPageAdminController (e2e)', () => {
     await setupFixture(testDataSource);
   });
 
+  beforeAll(async () => {
+    // given
+    const body = {
+      email: userFixture[0].email,
+      password: userFixture[0].password,
+    };
+
+    // when
+    const res = await request(app.getHttpServer()).post('/v1/auth/signin').send(body);
+
+    // then
+    expect(res.statusCode).toEqual(HttpStatus.CREATED);
+    cookie = res.header['set-cookie'];
+  });
+
   it('(POST) v1/school-pages', async () => {
     // given
     const body = {
@@ -50,7 +67,7 @@ describe('SchoolPageAdminController (e2e)', () => {
     };
 
     // when
-    const res = await request(app.getHttpServer()).post('/v1/school-pages').send(body);
+    const res = await request(app.getHttpServer()).post('/v1/school-pages').set('Cookie', cookie).send(body);
 
     // then
     expect(res.statusCode).toEqual(HttpStatus.CREATED);
@@ -78,7 +95,7 @@ describe('SchoolPageAdminController (e2e)', () => {
     });
 
     // when
-    const res = await request(app.getHttpServer()).delete(`/v1/school-pages/${schoolPage.id}`);
+    const res = await request(app.getHttpServer()).delete(`/v1/school-pages/${schoolPage.id}`).set('Cookie', cookie);
 
     // then
     expect(res.statusCode).toEqual(HttpStatus.OK);
