@@ -1,5 +1,5 @@
 import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
-import { SchoolNewsService } from '@classting/school-news/usecase/school-news.service';
+import { SchoolNewsService } from '@classting/school-news/usecase/services/school-news.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { mockDeep } from 'jest-mock-extended';

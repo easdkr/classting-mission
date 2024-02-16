@@ -8,6 +8,7 @@ import { HashModule } from '@libs/hash';
 import { UserModule } from '@classting/users';
 import { AuthModule } from '@classting/auth';
 import { SchoolPageModule } from '@classting/school-pages';
+import { SchoolNewsModule } from '@classting/school-news';
 
 const isProductionOrDevelopment = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development';
 const prodOrDevDependencies = isProductionOrDevelopment ? [RedisModule] : [];
@@ -28,6 +29,7 @@ const prodOrDevDependencies = isProductionOrDevelopment ? [RedisModule] : [];
     UserModule,
     AuthModule,
     SchoolPageModule,
+    SchoolNewsModule,
   ],
 })
 export class AppModule {}
