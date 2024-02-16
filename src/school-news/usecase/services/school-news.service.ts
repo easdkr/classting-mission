@@ -6,6 +6,7 @@ import {
   UpdateSchoolNewsCommand,
 } from '@classting/school-news/usecase/dtos/commands';
 import { SchoolPageService } from '@classting/school-pages/usecase/services';
+import { CursorResult } from '@libs/types';
 import { checkOrThrow } from '@libs/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,8 +16,8 @@ import { Repository } from 'typeorm';
 export class SchoolNewsService {
   public constructor(
     @InjectRepository(SchoolNewsEntity) private readonly schoolNewsRepository: Repository<SchoolNewsEntity>,
-    private readonly schoolPageService: SchoolPageService,
     private readonly schoolNewsQueryRepository: SchoolNewsQueryRepository,
+    private readonly schoolPageService: SchoolPageService,
   ) {}
 
   public async create(commands: CreateSchoolNewsCommand): Promise<SchoolNewsEntity> {
@@ -53,7 +54,7 @@ export class SchoolNewsService {
     return deleteRes.affected === 1;
   }
 
-  public async findManyByPage(commands: FindManySchoolNewsByPageCommand) {
+  public async findManyByPage(commands: FindManySchoolNewsByPageCommand): Promise<CursorResult<SchoolNewsEntity>> {
     const [schoolNews, nextCursor] = await this.schoolNewsQueryRepository.findMany({
       limit: commands.limit,
       cursor: commands.cursor,

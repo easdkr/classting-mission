@@ -30,6 +30,7 @@ export class SchoolNewsQueryRepository extends Repository<SchoolNewsEntity> {
     if (options.field) query.andWhere(options.field);
 
     const queryRes = await query.orderBy('id', 'DESC').getMany();
+
     const nextCursor = queryRes.length === options.limit + 1 ? queryRes.pop().id : undefined;
 
     return [queryRes, nextCursor];
