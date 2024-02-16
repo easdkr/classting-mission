@@ -241,7 +241,6 @@ describe('SchoolPageController (e2e)', () => {
     });
 
     it('should re-subscribe when cancelled', async () => {
-      console.log('should re-subscribe when cancelled');
       // given
       // 구독
       await request(app.getHttpServer()).post('/v1/school-pages/1/subscribe').set('cookie', cookie);

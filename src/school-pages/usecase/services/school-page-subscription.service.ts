@@ -28,11 +28,10 @@ export class SchoolPageSubscriptionService {
       pageId,
     });
 
-    const res = await subscription
+    return await subscription
       .map((v) => {
         if (v.isCancelled()) {
           v.cancelledAt = null;
-          console.log(v);
         } else {
           throw new ConflictException('Already subscribed');
         }
@@ -42,9 +41,6 @@ export class SchoolPageSubscriptionService {
       .getOrExecute(() =>
         this.schoolPageSubscriptionRepository.save(SchoolPageSubscriptionEntity.from({ userId, pageId })),
       );
-
-    console.log(res);
-    return res;
   }
 
   public async unsubscribe(userId: number, pageId: number): Promise<boolean> {
