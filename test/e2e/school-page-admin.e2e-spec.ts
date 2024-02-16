@@ -10,6 +10,7 @@ import { AppModule } from '@classting/app.module';
 import { initializeApplication } from '@libs/configs';
 import { UserService } from '@classting/users/usecase/services';
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { City } from '@classting/school-pages/usecase/enums';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;
@@ -67,6 +68,26 @@ describe('SchoolPageAdminController (e2e)', () => {
       city: 'Seoul',
       name: 'Test School',
     });
+  });
+
+  it('(DELETE) v1/school-pages/:id', async () => {
+    // given
+    const schoolPage = await testDataSource.manager.save(SchoolPageEntity, {
+      city: City.SEOUL,
+      name: 'Test School',
+    });
+
+    // when
+    const res = await request(app.getHttpServer()).delete(`/v1/school-pages/${schoolPage.id}`);
+
+    // then
+    expect(res.statusCode).toEqual(HttpStatus.OK);
+
+    const deletedSchoolPage = await testDataSource.manager.findOne(SchoolPageEntity, {
+      where: { id: schoolPage.id },
+    });
+
+    expect(deletedSchoolPage).toBeNull();
   });
 });
 
