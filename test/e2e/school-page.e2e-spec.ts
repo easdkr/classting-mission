@@ -11,6 +11,7 @@ import { UserService } from '@classting/users/usecase/services';
 import { memberUserFixture, roleFixture } from '@test/fixtures';
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
 import { City } from '@classting/school-pages/usecase/enums';
+import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 
 let memDB: IMemoryDb;
 let testDataSource: DataSource;
@@ -123,6 +124,82 @@ describe('SchoolPageController (e2e)', () => {
           .query({
             limit: 10,
             cursor: 20,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toBeUndefined();
+        expect(res.body.items).toHaveLength(0);
+      });
+    });
+  });
+
+  describe('GET /v1/school-pages/:id/school-news', () => {
+    describe('without data', () => {
+      it('', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages/1/school-news')
+          .query({
+            limit: 20,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toBeUndefined();
+        expect(res.body.items).toHaveLength(0);
+      });
+    });
+
+    describe('with data', () => {
+      beforeAll(async () => {
+        // page 1: 0 ~ 9, page 2: 10 ~ 19
+        const schoolNews = Array.from({ length: 20 }, (_, i) =>
+          SchoolNewsEntity.from({ title: `title-${i}`, content: `content-${i}`, pageId: i < 10 ? 1 : 2 }),
+        );
+        await testDataSource.manager.save(SchoolNewsEntity, schoolNews);
+      });
+
+      it('(LIST) without cursor param', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages/1/school-news')
+          .query({
+            limit: 5,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toEqual(5);
+        expect(res.body.items).toHaveLength(5);
+      });
+
+      it('(LIST) with cursor param', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages/2/school-news')
+          .query({
+            limit: 5,
+            cursor: 10,
+          })
+          .set('cookie', cookie);
+
+        // then
+        expect(res.statusCode).toEqual(HttpStatus.OK);
+        expect(res.body.nextCursor).toEqual(15);
+        expect(res.body.items).toHaveLength(5);
+      });
+
+      it('(LIST) with cursor param (last page)', async () => {
+        // when
+        const res = await request(app.getHttpServer())
+          .get('/v1/school-pages/1/school-news')
+          .query({
+            limit: 10,
+            cursor: 10,
           })
           .set('cookie', cookie);
 

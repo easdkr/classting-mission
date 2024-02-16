@@ -1,7 +1,12 @@
 import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 import { SchoolNewsQueryRepository } from '@classting/school-news/persistence/repositories';
-import { CreateSchoolNewsCommand, UpdateSchoolNewsCommand } from '@classting/school-news/usecase/dtos/commands';
+import {
+  CreateSchoolNewsCommand,
+  FindManySchoolNewsByPageCommand,
+  UpdateSchoolNewsCommand,
+} from '@classting/school-news/usecase/dtos/commands';
 import { SchoolPageService } from '@classting/school-pages/usecase/services';
+import { CursorResult } from '@libs/types';
 import { checkOrThrow } from '@libs/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,8 +16,8 @@ import { Repository } from 'typeorm';
 export class SchoolNewsService {
   public constructor(
     @InjectRepository(SchoolNewsEntity) private readonly schoolNewsRepository: Repository<SchoolNewsEntity>,
-    private readonly schoolPageService: SchoolPageService,
     private readonly schoolNewsQueryRepository: SchoolNewsQueryRepository,
+    private readonly schoolPageService: SchoolPageService,
   ) {}
 
   public async create(commands: CreateSchoolNewsCommand): Promise<SchoolNewsEntity> {
@@ -47,5 +52,15 @@ export class SchoolNewsService {
     const deleteRes = await this.schoolNewsRepository.delete({ id });
 
     return deleteRes.affected === 1;
+  }
+
+  public async findManyByPage(commands: FindManySchoolNewsByPageCommand): Promise<CursorResult<SchoolNewsEntity>> {
+    const [schoolNews, nextCursor] = await this.schoolNewsQueryRepository.findMany({
+      limit: commands.limit,
+      cursor: commands.cursor,
+      field: { pageId: commands.pageId },
+    });
+
+    return [schoolNews, nextCursor];
   }
 }
