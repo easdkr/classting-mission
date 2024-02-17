@@ -1,6 +1,9 @@
 import { SchoolNewsModule } from '@classting/school-news';
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
-import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
+import {
+  SchoolPageQueryRepository,
+  SchoolPageSubscriptionQueryRepository,
+} from '@classting/school-pages/persistence/repositories';
 import { SchoolPageAdminController } from '@classting/school-pages/presentation/controllers';
 import { SchoolPageController } from '@classting/school-pages/presentation/controllers/school-page.controller';
 import { SchoolPageService } from '@classting/school-pages/usecase/services';
@@ -10,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [forwardRef(() => SchoolNewsModule), TypeOrmModule.forFeature([SchoolPageEntity])],
   controllers: [SchoolPageAdminController, SchoolPageController],
-  providers: [SchoolPageService, SchoolPageQueryRepository],
+  providers: [SchoolPageService, SchoolPageQueryRepository, SchoolPageSubscriptionQueryRepository],
   exports: [SchoolPageService],
 })
 export class SchoolPageModule {}
