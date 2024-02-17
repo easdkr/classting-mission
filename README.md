@@ -32,7 +32,8 @@ yarn start:prod
 
 ### API 명세
 
-> 애플리케이션 실행 후 `{애플리케이션 주소}/docs` 로 접근 ex) localhost/docs
+#### 애플리케이션 실행 후 `{애플리케이션 주소}/docs` 로 접근 ex) localhost/docs
+
 > ![api](./docs/images/api-doc.png)
 
 ### ERD
