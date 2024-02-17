@@ -5,7 +5,7 @@ import { CreateSchoolPageResponse } from '@classting/school-pages/presentation/d
 import { SchoolPageService } from '@classting/school-pages/usecase/services';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConflictResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('School Pages')
 @UseRole(Role.ADMIN)
@@ -15,6 +15,7 @@ export class SchoolPageAdminController {
   public constructor(private readonly schoolPageService: SchoolPageService) {}
 
   @Post()
+  @ApiConflictResponse({ description: 'School page already exists' })
   public async create(@Body() body: CreateSchoolPageBody): Promise<CreateSchoolPageResponse> {
     const command = body.toCommand();
 

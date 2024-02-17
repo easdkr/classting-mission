@@ -13,7 +13,7 @@ import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
 import { Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiConflictResponse, ApiQuery, ApiTags, ApiUnprocessableEntityResponse } from '@nestjs/swagger';
 
 @ApiTags('School Pages')
 @UseRole(Role.MEMBER)
@@ -74,6 +74,7 @@ export class SchoolPageController {
   }
 
   @Post(':id/subscribe')
+  @ApiConflictResponse({ description: 'Already subscribed' })
   public async subscribe(
     @Param('id', ParseIntPipe) id: number,
     @User() user: SessionUser,
@@ -84,6 +85,7 @@ export class SchoolPageController {
   }
 
   @Delete(':id/subscribe')
+  @ApiUnprocessableEntityResponse({ description: 'Not subscribed' })
   public async unsubscribe(@Param('id', ParseIntPipe) id: number, @User() user: SessionUser): Promise<boolean> {
     return await this.schoolPageSubscriptionService.unsubscribe(user.id, id);
   }

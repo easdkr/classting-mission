@@ -2,7 +2,7 @@ import { CreateUserBody } from '@classting/users/presentation/dtos/requests';
 import { FindAllRolesResponse } from '@classting/users/presentation/dtos/responses';
 import { UserService } from '@classting/users/usecase/services';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiConflictResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller({ path: 'users', version: '1' })
@@ -10,6 +10,8 @@ export class UserController {
   public constructor(private readonly userService: UserService) {}
 
   @Post()
+  @ApiBadGatewayResponse({ description: 'Role does not exist' })
+  @ApiConflictResponse({ description: 'Email already exists' })
   public async create(@Body() body: CreateUserBody): Promise<void> {
     const command = body.toCommand();
 

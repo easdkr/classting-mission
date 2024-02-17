@@ -4,7 +4,7 @@ import { checkOrThrow } from '@libs/utils';
 import { HashService } from '@libs/hash';
 import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
 import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserCommand } from '@classting/users/usecase/dtos/commands';
@@ -23,7 +23,7 @@ export class UserService {
     checkOrThrow(roleExists, new BadRequestException('Role does not exist'));
 
     const emailExists = await this.userQueryRepository.existsByEmail(command.email);
-    checkOrThrow(!emailExists, new BadRequestException('Email already exists'));
+    checkOrThrow(!emailExists, new ConflictException('Email already exists'));
 
     const hashedPassword = await this.hashService.hash(command.password);
 
