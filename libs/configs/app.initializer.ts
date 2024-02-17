@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppEnvironment } from '@libs/configs';
 import RedisStore from 'connect-redis';
 import { RedisClient } from '@libs/redis';
+import { TypeORMExceptionFilter } from '@libs/filters';
 
 export function initializeApplication<T extends INestApplication>(app: T): void {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -16,7 +17,7 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
       forbidNonWhitelisted: true,
     }),
   );
-
+  app.useGlobalFilters(new TypeORMExceptionFilter());
   app.enableShutdownHooks();
   app.enableVersioning({ type: VersioningType.URI });
   app.enableCors({
