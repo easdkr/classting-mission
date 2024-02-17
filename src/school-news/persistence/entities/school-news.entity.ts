@@ -1,6 +1,6 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { BaseEntity } from '@libs/database/entities';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 interface ISchoolNews {
   title: string;
@@ -17,6 +17,7 @@ export class SchoolNewsEntity extends BaseEntity {
   public content: string;
 
   @Column({ name: 'page_id' })
+  @Index('idx_page_id_on_school_news')
   public pageId: number;
 
   @ManyToOne(() => SchoolPageEntity, { onDelete: 'CASCADE' })
