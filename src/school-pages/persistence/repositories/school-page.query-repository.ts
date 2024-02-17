@@ -45,7 +45,6 @@ export class SchoolPageQueryRepository extends Repository<SchoolPageEntity> {
         .andWhere('sub.userId = :userId', { userId: options.onlySubscribed.userId });
     }
 
-    console.log(query.getSql(), query.getParameters());
     const queryRes: any = await query
       .orderBy('sp.id', 'DESC')
       .getMany()

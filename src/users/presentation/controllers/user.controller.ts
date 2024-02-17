@@ -23,6 +23,9 @@ export class UserController {
     return;
   }
 
+  /**
+   * 모든 역할 조회
+   */
   @Get('roles')
   public async findAllRoles(): Promise<FindAllRolesResponse> {
     const roles = await this.userService.findAllRoles();

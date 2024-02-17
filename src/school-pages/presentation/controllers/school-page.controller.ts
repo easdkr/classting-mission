@@ -13,10 +13,16 @@ import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
 import { Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiConflictResponse, ApiQuery, ApiTags, ApiUnprocessableEntityResponse } from '@nestjs/swagger';
+import {
+  ApiConflictResponse,
+  ApiNotFoundResponse,
+  ApiQuery,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('School page (member)')
-@UseRole(Role.MEMBER)
+@UseRole(Role.MEMBER, Role.ADMIN)
 @UseGuards(AuthGuard, RoleGuard)
 @Controller({ path: 'school-pages', version: '1' })
 export class SchoolPageController {
@@ -26,6 +32,9 @@ export class SchoolPageController {
     private readonly schoolPageSubscriptionService: SchoolPageSubscriptionService,
   ) {}
 
+  /**
+   * 전체 학교 페이지 조회
+   */
   @Get()
   @ApiQuery({ name: 'limit', type: Number, required: true })
   @ApiQuery({ name: 'cursor', type: Number, required: false })
@@ -38,7 +47,12 @@ export class SchoolPageController {
     return FindManySchoolPageResponse.from(schoolPages, nextCursor);
   }
 
+  /**
+   * 구독한 학교 페이지 조회
+   */
   @Get('/subscriptions')
+  @ApiQuery({ name: 'limit', type: Number, required: true })
+  @ApiQuery({ name: 'cursor', type: Number, required: false })
   public async findOnlySubscribed(
     @Query('limit', ParseIntPipe) limit: number,
     @User() user: SessionUser,
@@ -55,6 +69,9 @@ export class SchoolPageController {
     return FindManySchoolPageResponse.from(schoolPages, nextCursor);
   }
 
+  /**
+   * 구독한 학교 페이지의 뉴스 조회
+   */
   @Get(':id/school-news')
   @UseGuards(SubscriptionGuard)
   @ApiQuery({ name: 'limit', type: Number, required: true })
@@ -73,8 +90,12 @@ export class SchoolPageController {
     return FindManySchoolNewsByIdResponse.from(schoolNews, nextCursor);
   }
 
+  /**
+   * 구독
+   */
   @Post(':id/subscribe')
   @ApiConflictResponse({ description: 'Already subscribed' })
+  @ApiNotFoundResponse({ description: 'School page not found' })
   public async subscribe(
     @Param('id', ParseIntPipe) id: number,
     @User() user: SessionUser,
@@ -84,6 +105,9 @@ export class SchoolPageController {
     return SubscribeSchoolPageResponse.fromEntity(subscriptionEntity);
   }
 
+  /**
+   * 구독 취소
+   */
   @Delete(':id/subscribe')
   @ApiUnprocessableEntityResponse({ description: 'Not subscribed' })
   public async unsubscribe(@Param('id', ParseIntPipe) id: number, @User() user: SessionUser): Promise<boolean> {

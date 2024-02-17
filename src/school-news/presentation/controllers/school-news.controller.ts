@@ -6,16 +6,21 @@ import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
 import { Controller, Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('School news (member)')
 @Controller({ path: 'school-news', version: '1' })
-@UseGuards(AuthGuard, RoleGuard)
 @UseRole(Role.MEMBER)
+@UseGuards(AuthGuard, RoleGuard)
 export class SchoolNewsController {
   public constructor(private readonly schoolNewsService: SchoolNewsService) {}
 
+  /**
+   * 구독한 학교 페이지의 뉴스피드 조회
+   */
   @Get()
+  @ApiQuery({ name: 'limit', type: Number, required: true })
+  @ApiQuery({ name: 'cursor', type: Number, required: false })
   public async findAllSubscribedPageNews(
     @User() user: SessionUser,
     @Query('limit', ParseIntPipe) limit: number,

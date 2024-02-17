@@ -2,7 +2,6 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 const entitiesPath = `${__dirname}/../../**/*.entity.{js,ts}`;
 const migrationPath = `${__dirname}/migrations/**/*.{js,ts}`;
-console.log(process.env.DATABASE_NAME);
 
 export const AppDataSource = new DataSource({
   type: 'postgres',

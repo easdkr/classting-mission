@@ -14,6 +14,9 @@ import { ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 export class SchoolNewsAdminController {
   public constructor(private readonly schoolNewsService: SchoolNewsService) {}
 
+  /**
+   * 학교 페이지 뉴스 생성
+   */
   @Post()
   @ApiNotFoundResponse({ description: 'School page does not exist' })
   public async create(@Body() body: CreateSchoolNewsBody): Promise<CreateSchoolNewsResponse> {
@@ -23,6 +26,9 @@ export class SchoolNewsAdminController {
     return CreateSchoolNewsResponse.fromEntity(schoolNews);
   }
 
+  /**
+   * 학교 페이지 뉴스 수정
+   */
   @Put(':id')
   @ApiNotFoundResponse({ description: 'School page does not exist or new not exist' })
   public async update(
@@ -35,6 +41,9 @@ export class SchoolNewsAdminController {
     return UpdateSchoolNewsResponse.fromEntity(schoolNews);
   }
 
+  /**
+   * 학교 페이지 뉴스 삭제
+   */
   @Delete(':id')
   public async delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return this.schoolNewsService.delete(id);

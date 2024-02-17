@@ -14,6 +14,9 @@ import { ApiConflictResponse, ApiTags } from '@nestjs/swagger';
 export class SchoolPageAdminController {
   public constructor(private readonly schoolPageService: SchoolPageService) {}
 
+  /**
+   * 학교 페이지 생성
+   */
   @Post()
   @ApiConflictResponse({ description: 'School page already exists' })
   public async create(@Body() body: CreateSchoolPageBody): Promise<CreateSchoolPageResponse> {
@@ -22,6 +25,9 @@ export class SchoolPageAdminController {
     return this.schoolPageService.create(command).then(CreateSchoolPageResponse.fromEntity);
   }
 
+  /**
+   * 학교 페이지 삭제
+   */
   @Delete(':id')
   public async delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return this.schoolPageService.delete(id);

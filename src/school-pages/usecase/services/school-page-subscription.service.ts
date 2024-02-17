@@ -2,7 +2,7 @@ import { SchoolPageSubscriptionEntity } from '@classting/school-pages/persistenc
 import { SchoolPageSubscriptionQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { SchoolPageService } from '@classting/school-pages/usecase/services/school-page.service';
 import { checkOrThrow } from '@libs/utils';
-import { ConflictException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -28,7 +28,7 @@ export class SchoolPageSubscriptionService {
     checkOrThrow(!exists, new ConflictException('Already subscribed'));
 
     const pageExists = await this.schoolPageService.exists(pageId);
-    checkOrThrow(pageExists, new UnprocessableEntityException('School page not found'));
+    checkOrThrow(pageExists, new NotFoundException('School page not found'));
 
     const subscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
 
