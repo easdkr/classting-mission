@@ -135,78 +135,79 @@ describe('SchoolPageController (e2e)', () => {
     });
   });
 
+  describe('GET /v1/school-pages/subscriptions', () => {
+    beforeAll(async () => {
+      // 페이지 생성
+      await testDataSource.manager.query(
+        `INSERT INTO school_pages (id, name, city) VALUES (100, 'school-name-100', 'Seoul'), (101, 'school-name-101', 'Busan')`,
+      );
+
+      // 구독
+      await testDataSource.manager.query(`INSERT INTO school_page_subscriptions (user_id, page_id) VALUES (1, 100)`);
+    });
+
+    it('구독 중인 페이지 조회', async () => {
+      // when
+      const res = await request(app.getHttpServer())
+        .get('/v1/school-pages/subscriptions')
+        .query({
+          limit: 5,
+        })
+        .set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.OK);
+      expect(res.body.items).toHaveLength(1);
+      expect(res.body.items[0]).toMatchObject({
+        id: 100,
+        name: 'school-name-100',
+        city: City.SEOUL,
+      });
+    });
+  });
+
   describe('GET /v1/school-pages/:id/school-news', () => {
-    describe('without data', () => {
-      it('', async () => {
+    const schoolPageId = 5;
+    describe('미구독', () => {
+      it('미구독 시 Forbidden 에러가 발생해야 한다.', async () => {
         // when
         const res = await request(app.getHttpServer())
-          .get('/v1/school-pages/1/school-news')
+          .get(`/v1/school-pages/${schoolPageId}/school-news`)
           .query({
             limit: 20,
           })
           .set('cookie', cookie);
 
         // then
-        expect(res.statusCode).toEqual(HttpStatus.OK);
-        expect(res.body.nextCursor).toBeUndefined();
-        expect(res.body.items).toHaveLength(0);
+        expect(res.statusCode).toEqual(HttpStatus.FORBIDDEN);
       });
     });
 
-    describe('with data', () => {
+    describe('구독시 페이지별 뉴스 조회', () => {
       beforeAll(async () => {
         // page 1: 0 ~ 9, page 2: 10 ~ 19
         const schoolNews = Array.from({ length: 20 }, (_, i) =>
-          SchoolNewsEntity.from({ title: `title-${i}`, content: `content-${i}`, pageId: i < 10 ? 1 : 2 }),
+          SchoolNewsEntity.from({ title: `title-${i}`, content: `content-${i}`, pageId: schoolPageId }),
         );
         await testDataSource.manager.save(SchoolNewsEntity, schoolNews);
+
+        // 구독
+        await request(app.getHttpServer()).post(`/v1/school-pages/${schoolPageId}/subscribe`).set('cookie', cookie);
       });
 
       it('(LIST) without cursor param', async () => {
         // when
         const res = await request(app.getHttpServer())
-          .get('/v1/school-pages/1/school-news')
-          .query({
-            limit: 5,
-          })
-          .set('cookie', cookie);
-
-        // then
-        expect(res.statusCode).toEqual(HttpStatus.OK);
-        expect(res.body.nextCursor).toEqual(5);
-        expect(res.body.items).toHaveLength(5);
-      });
-
-      it('(LIST) with cursor param', async () => {
-        // when
-        const res = await request(app.getHttpServer())
-          .get('/v1/school-pages/2/school-news')
-          .query({
-            limit: 5,
-            cursor: 10,
-          })
-          .set('cookie', cookie);
-
-        // then
-        expect(res.statusCode).toEqual(HttpStatus.OK);
-        expect(res.body.nextCursor).toEqual(15);
-        expect(res.body.items).toHaveLength(5);
-      });
-
-      it('(LIST) with cursor param (last page)', async () => {
-        // when
-        const res = await request(app.getHttpServer())
-          .get('/v1/school-pages/1/school-news')
+          .get(`/v1/school-pages/${schoolPageId}/school-news`)
           .query({
             limit: 10,
-            cursor: 10,
           })
           .set('cookie', cookie);
 
         // then
         expect(res.statusCode).toEqual(HttpStatus.OK);
-        expect(res.body.nextCursor).toBeUndefined();
-        expect(res.body.items).toHaveLength(0);
+        expect(res.body.nextCursor).toEqual(10);
+        expect(res.body.items).toHaveLength(10);
       });
     });
   });

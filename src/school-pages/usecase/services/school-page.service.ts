@@ -1,6 +1,9 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
-import { CreateSchoolPageCommand } from '@classting/school-pages/usecase/dtos/commands';
+import {
+  CreateSchoolPageCommand,
+  FindSchoolPageOnlySubscribedCommand,
+} from '@classting/school-pages/usecase/dtos/commands';
 import { Maybe } from '@libs/functional';
 import { CursorResult } from '@libs/types';
 import { checkOrThrow } from '@libs/utils';
@@ -38,6 +41,18 @@ export class SchoolPageService {
 
   public async findMany(limit: number, cursor?: number): Promise<CursorResult<SchoolPageEntity>> {
     const [schoolPages, nextCursor] = await this.schoolPageQueryRepository.findMany({ limit, cursor });
+
+    return [schoolPages, nextCursor];
+  }
+
+  public async findOnlySubscribed(
+    commands: FindSchoolPageOnlySubscribedCommand,
+  ): Promise<CursorResult<SchoolPageEntity>> {
+    const [schoolPages, nextCursor] = await this.schoolPageQueryRepository.findMany({
+      limit: commands.limit,
+      cursor: commands.limit,
+      onlySubscribed: { userId: commands.userId },
+    });
 
     return [schoolPages, nextCursor];
   }
