@@ -6,6 +6,7 @@ import {
   FindManySchoolNewsByIdResponse,
   SubscribeSchoolPageResponse,
 } from '@classting/school-pages/presentation/dtos/responses';
+import { SubscriptionGuard } from '@classting/school-pages/presentation/guards';
 import { SchoolPageService, SchoolPageSubscriptionService } from '@classting/school-pages/usecase/services';
 import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
@@ -37,6 +38,7 @@ export class SchoolPageController {
   }
 
   @Get(':id/school-news')
+  @UseGuards(SubscriptionGuard)
   @ApiQuery({ name: 'limit', type: Number, required: true })
   @ApiQuery({ name: 'cursor', type: Number, required: false })
   public async findManySchoolNewsById(

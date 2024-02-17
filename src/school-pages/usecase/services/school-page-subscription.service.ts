@@ -13,6 +13,10 @@ export class SchoolPageSubscriptionService {
     private readonly schoolPageSubscriptionQueryRepository: SchoolPageSubscriptionQueryRepository,
   ) {}
 
+  public async exists(userId: number, pageId: number): Promise<boolean> {
+    return this.schoolPageSubscriptionQueryRepository.existsByFields({ userId, pageId, cancelledAt: null });
+  }
+
   public async subscribe(userId: number, pageId: number): Promise<SchoolPageSubscriptionEntity> {
     const exists = await this.schoolPageSubscriptionQueryRepository.existsByFields({
       userId,
