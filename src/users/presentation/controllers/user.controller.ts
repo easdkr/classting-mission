@@ -10,7 +10,7 @@ export class UserController {
   public constructor(private readonly userService: UserService) {}
 
   @Post()
-  public async create(@Body() body: CreateUserBody): Promise<string> {
+  public async create(@Body() body: CreateUserBody): Promise<void> {
     const command = body.toCommand();
 
     await this.userService.create(command);
