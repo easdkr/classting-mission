@@ -1,6 +1,7 @@
 import { SchoolPageSubscriptionEntity } from '@classting/school-pages/persistence/entities';
 import { SchoolPageSubscriptionQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { SchoolPageSubscriptionService } from '@classting/school-pages/usecase/services/school-page-subscription.service';
+import { Maybe } from '@libs/functional';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { mockDeep } from 'jest-mock-extended';
@@ -56,6 +57,34 @@ describe('SchoolPageSubscriptionService', () => {
       mockSchoolPageSubscriptionQueryRepository.existsByFields.mockResolvedValue(true);
 
       await expect(service.subscribe(userId, pageId)).rejects.toThrow('Already subscribed');
+    });
+  });
+
+  describe('unsubscribe', () => {
+    it('should unsubscribe', async () => {
+      // given
+      const userId = 1;
+      const pageId = 1;
+      mockSchoolPageSubscriptionQueryRepository.findUnique.mockResolvedValueOnce(
+        Maybe.of(SchoolPageSubscriptionEntity.from({ userId, pageId })),
+      );
+      mockSchoolPageSubscriptionRepository.save.mockResolvedValueOnce(
+        SchoolPageSubscriptionEntity.from({ userId, pageId }),
+      );
+
+      // when
+      const received = await service.unsubscribe(userId, pageId);
+
+      // then
+      expect(received).toBe(true);
+    });
+
+    it('should throw UnprocessableEntityException when not subscribed', async () => {
+      const userId = 1;
+      const pageId = 1;
+      mockSchoolPageSubscriptionQueryRepository.findUnique.mockResolvedValueOnce(Maybe.nothing());
+
+      await expect(service.unsubscribe(userId, pageId)).rejects.toThrow('Not subscribed');
     });
   });
 });

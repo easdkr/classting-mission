@@ -1,7 +1,7 @@
 import { SchoolPageSubscriptionEntity } from '@classting/school-pages/persistence/entities';
 import { SchoolPageSubscriptionQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { checkOrThrow } from '@libs/utils';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -24,5 +24,19 @@ export class SchoolPageSubscriptionService {
     const subscription = SchoolPageSubscriptionEntity.from({ userId, pageId });
 
     return this.schoolPageSubscriptionRepository.save(subscription);
+  }
+
+  public async unsubscribe(userId: number, pageId: number): Promise<boolean> {
+    const subscription = await this.schoolPageSubscriptionQueryRepository
+      .findUnique({
+        userId,
+        pageId,
+        cancelledAt: null,
+      })
+      .then((v) => v.getOrThrow(new UnprocessableEntityException('Not subscribed')));
+
+    subscription.cancel();
+
+    return !!(await this.schoolPageSubscriptionRepository.save(subscription));
   }
 }
