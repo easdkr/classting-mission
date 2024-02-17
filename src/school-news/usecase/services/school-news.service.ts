@@ -2,6 +2,7 @@ import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 import { SchoolNewsQueryRepository } from '@classting/school-news/persistence/repositories';
 import {
   CreateSchoolNewsCommand,
+  FindAllSubscribedPageNewsCommand,
   FindManySchoolNewsByPageCommand,
   UpdateSchoolNewsCommand,
 } from '@classting/school-news/usecase/dtos/commands';
@@ -59,6 +60,21 @@ export class SchoolNewsService {
       limit: commands.limit,
       cursor: commands.cursor,
       field: { pageId: commands.pageId },
+    });
+
+    return [schoolNews, nextCursor];
+  }
+
+  public async findAllSubscribedPageNews({
+    limit,
+    userId,
+    cursor,
+  }: FindAllSubscribedPageNewsCommand): Promise<CursorResult<SchoolNewsEntity>> {
+    const [schoolNews, nextCursor] = await this.schoolNewsQueryRepository.findSubscribedPageNews({
+      limit,
+      cursor,
+      userId,
+      includeCancelled: true,
     });
 
     return [schoolNews, nextCursor];

@@ -9,6 +9,7 @@ export async function createTestDataSource(db: IMemoryDb) {
     database: 'test',
     autoLoadEntities: true,
     synchronize: true,
+    logging: true,
   });
 
   return dataSource;

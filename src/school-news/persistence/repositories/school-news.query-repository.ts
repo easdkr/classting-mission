@@ -2,7 +2,7 @@ import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 import { Maybe } from '@libs/functional';
 import { CursorResult, EntityCondition } from '@libs/types';
 import { Injectable } from '@nestjs/common';
-import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
+import { Brackets, DataSource, FindOptionsWhere, Repository } from 'typeorm';
 
 @Injectable()
 export class SchoolNewsQueryRepository extends Repository<SchoolNewsEntity> {
@@ -30,6 +30,41 @@ export class SchoolNewsQueryRepository extends Repository<SchoolNewsEntity> {
     if (options.field) query.andWhere(options.field);
 
     const queryRes = await query.orderBy('id', 'DESC').getMany();
+
+    const nextCursor = queryRes.length === options.limit + 1 ? queryRes.pop().id : undefined;
+
+    return [queryRes, nextCursor];
+  }
+
+  public async findSubscribedPageNews(options: {
+    userId: number;
+    limit: number;
+    cursor?: number;
+    includeCancelled: boolean;
+  }): Promise<CursorResult<SchoolNewsEntity>> {
+    const subQuery = this.createQueryBuilder('sn')
+      .select('sn.id', 'id')
+      .leftJoin('sn.page', 'sp')
+      .leftJoin('sp.subscriptions', 'sub')
+      .where('sub.userId = :userId', { userId: options.userId })
+      .andWhere('sub.created_at <= sn.created_at')
+      .andWhere(options.cursor ? 'sn.id <= :cursor' : '1=1', { cursor: options.cursor })
+      .orderBy('sn.id', 'DESC')
+      .limit(options.limit + 1);
+
+    if (!options.includeCancelled) {
+      subQuery.andWhere('sub.cancelled_at IS NULL');
+    } else {
+      subQuery.andWhere(
+        new Brackets((qb) => qb.orWhere('sub.cancelled_at IS NULL').orWhere('sub.cancelled_at > sn.created_at')),
+      );
+    }
+
+    const queryRes = await this.createQueryBuilder('sn')
+      .where(`sn.id IN (${subQuery.getQuery()})`)
+      .setParameters({ ...subQuery.getParameters() })
+      .orderBy('id', 'DESC')
+      .getMany();
 
     const nextCursor = queryRes.length === options.limit + 1 ? queryRes.pop().id : undefined;
 
