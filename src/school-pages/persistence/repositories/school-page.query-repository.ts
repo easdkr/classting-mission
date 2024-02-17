@@ -31,13 +31,27 @@ export class SchoolPageQueryRepository extends Repository<SchoolPageEntity> {
     limit: number;
     cursor?: number;
     field?: EntityCondition<SchoolPageEntity>;
+    onlySubscribed?: { userId: number };
   }): Promise<CursorResult<SchoolPageEntity>> {
     const query = this.createQueryBuilder('sp')
       .limit(options.limit + 1)
       .where(options.cursor ? 'sp.id > :cursor' : '1=1', { cursor: options.cursor });
+
     if (options.field) query.andWhere(options.field);
 
-    const queryRes = await query.orderBy('id', 'DESC').getMany();
+    if (options.onlySubscribed) {
+      query
+        .leftJoin('sp.subscriptions', 'sub')
+        .andWhere('sub.userId = :userId', { userId: options.onlySubscribed.userId });
+    }
+
+    console.log(query.getSql(), query.getParameters());
+    const queryRes: any = await query
+      .orderBy('sp.id', 'DESC')
+      .getMany()
+      .catch((err) => {
+        console.error(err);
+      });
     const nextCursor = queryRes.length === options.limit + 1 ? queryRes.pop().id : undefined;
 
     return [queryRes, nextCursor];

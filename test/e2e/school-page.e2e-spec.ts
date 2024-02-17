@@ -135,6 +135,37 @@ describe('SchoolPageController (e2e)', () => {
     });
   });
 
+  describe('GET /v1/school-pages/subscriptions', () => {
+    beforeAll(async () => {
+      // 페이지 생성
+      await testDataSource.manager.query(
+        `INSERT INTO school_pages (id, name, city) VALUES (100, 'school-name-100', 'Seoul'), (101, 'school-name-101', 'Busan')`,
+      );
+
+      // 구독
+      await testDataSource.manager.query(`INSERT INTO school_page_subscriptions (user_id, page_id) VALUES (1, 100)`);
+    });
+
+    it('구독 중인 페이지 조회', async () => {
+      // when
+      const res = await request(app.getHttpServer())
+        .get('/v1/school-pages/subscriptions')
+        .query({
+          limit: 5,
+        })
+        .set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.OK);
+      expect(res.body.items).toHaveLength(1);
+      expect(res.body.items[0]).toMatchObject({
+        id: 100,
+        name: 'school-name-100',
+        city: City.SEOUL,
+      });
+    });
+  });
+
   describe('GET /v1/school-pages/:id/school-news', () => {
     const schoolPageId = 5;
     describe('미구독', () => {

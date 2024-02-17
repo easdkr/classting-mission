@@ -7,6 +7,7 @@ import {
   SubscribeSchoolPageResponse,
 } from '@classting/school-pages/presentation/dtos/responses';
 import { SubscriptionGuard } from '@classting/school-pages/presentation/guards';
+import { FindSchoolPageOnlySubscribedCommand } from '@classting/school-pages/usecase/dtos/commands';
 import { SchoolPageService, SchoolPageSubscriptionService } from '@classting/school-pages/usecase/services';
 import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
@@ -33,6 +34,23 @@ export class SchoolPageController {
     @Query('cursor', OptionalParseIntPipe) cursor?: number,
   ): Promise<FindManySchoolPageResponse> {
     const [schoolPages, nextCursor] = await this.schoolPageService.findMany(limit, cursor);
+
+    return FindManySchoolPageResponse.from(schoolPages, nextCursor);
+  }
+
+  @Get('/subscriptions')
+  public async findOnlySubscribed(
+    @Query('limit', ParseIntPipe) limit: number,
+    @User() user: SessionUser,
+    @Query('cursor', OptionalParseIntPipe) cursor?: number,
+  ): Promise<FindManySchoolPageResponse> {
+    const commands: FindSchoolPageOnlySubscribedCommand = {
+      limit,
+      cursor,
+      userId: user.id,
+    };
+
+    const [schoolPages, nextCursor] = await this.schoolPageService.findOnlySubscribed(commands);
 
     return FindManySchoolPageResponse.from(schoolPages, nextCursor);
   }

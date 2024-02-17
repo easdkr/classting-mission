@@ -118,7 +118,6 @@ describe('SchoolNewsController (e2e)', () => {
 
         // then
         expect(res.statusCode).toEqual(HttpStatus.OK);
-        console.log(res.body);
         expect(res.body.items.find((item) => item.title === 'before subscribe')).toBeUndefined();
       });
 
