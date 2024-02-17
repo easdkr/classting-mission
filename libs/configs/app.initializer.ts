@@ -26,7 +26,6 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
   });
 
   const configService = app.get(ConfigService<AppEnvironment>);
-  const isProduction = configService.get('NODE_ENV') === 'production';
   const isTest = configService.get('NODE_ENV') === 'test';
 
   const sessionName = '_sid_';
@@ -44,7 +43,7 @@ export function initializeApplication<T extends INestApplication>(app: T): void 
       proxy: true,
       cookie: {
         httpOnly: true,
-        secure: isProduction,
+        secure: false,
         maxAge: cookieMaxAge, // 7d
       },
     } as session.SessionOptions),
