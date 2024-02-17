@@ -1,4 +1,4 @@
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { Maybe } from '@libs/functional';
 import { CursorResult, EntityCondition } from '@libs/types';
 import { Injectable } from '@nestjs/common';

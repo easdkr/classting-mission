@@ -1,4 +1,4 @@
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { CreateSchoolPageCommand } from '@classting/school-pages/usecase/dtos/commands';
 import { Maybe } from '@libs/functional';

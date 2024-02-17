@@ -1,4 +1,4 @@
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { City } from '@classting/school-pages/usecase/enums';
 import { SchoolPageService } from '@classting/school-pages/usecase/services/school-page.service';

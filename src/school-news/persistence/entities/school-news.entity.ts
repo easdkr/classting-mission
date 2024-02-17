@@ -1,4 +1,4 @@
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { BaseEntity } from '@libs/database/entities';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 

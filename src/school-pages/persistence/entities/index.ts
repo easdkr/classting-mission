@@ -1,1 +1,1 @@
-export * from './school_page.entity';
+export * from './school-page.entity';

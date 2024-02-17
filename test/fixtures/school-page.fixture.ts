@@ -1,4 +1,4 @@
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { City } from '@classting/school-pages/usecase/enums';
 import { DeepPartial } from 'typeorm';
 

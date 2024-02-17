@@ -1,5 +1,5 @@
 import { SchoolNewsModule } from '@classting/school-news';
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
 import { SchoolPageQueryRepository } from '@classting/school-pages/persistence/repositories';
 import { SchoolPageAdminController } from '@classting/school-pages/presentation/controllers';
 import { SchoolPageController } from '@classting/school-pages/presentation/controllers/school-page.controller';
