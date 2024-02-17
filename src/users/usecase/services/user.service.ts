@@ -2,7 +2,7 @@ import { Maybe } from '@libs/functional';
 import { EntityCondition } from '@libs/types';
 import { checkOrThrow } from '@libs/utils';
 import { HashService } from '@libs/hash';
-import { UserEntity } from '@classting/users/persistence/entities';
+import { RoleEntity, UserEntity } from '@classting/users/persistence/entities';
 import { RoleQueryRepository, UserQueryRepository } from '@classting/users/persistence/repositories';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,5 +40,11 @@ export class UserService {
     const user = await this.userQueryRepository.findUnique(field);
 
     return user;
+  }
+
+  public async findAllRoles(): Promise<RoleEntity[]> {
+    const roles = await this.roleQueryRepository.findAll();
+
+    return roles;
   }
 }

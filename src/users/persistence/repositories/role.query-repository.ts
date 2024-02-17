@@ -12,4 +12,9 @@ export class RoleQueryRepository extends Repository<RoleEntity> {
     const queryRes = await this.findOne({ where: { id } });
     return !!queryRes;
   }
+
+  public async findAll(): Promise<RoleEntity[]> {
+    const queryRes = await this.find();
+    return queryRes;
+  }
 }

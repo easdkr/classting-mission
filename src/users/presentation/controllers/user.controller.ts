@@ -1,6 +1,7 @@
 import { CreateUserBody } from '@classting/users/presentation/dtos/requests';
+import { FindAllRolesResponse } from '@classting/users/presentation/dtos/responses';
 import { UserService } from '@classting/users/usecase/services';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -15,5 +16,12 @@ export class UserController {
     await this.userService.create(command);
 
     return;
+  }
+
+  @Get('roles')
+  public async findAllRoles(): Promise<FindAllRolesResponse> {
+    const roles = await this.userService.findAllRoles();
+
+    return FindAllRolesResponse.fromEntity(roles);
   }
 }
