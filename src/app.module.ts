@@ -17,7 +17,7 @@ const prodOrDevDependencies = isProductionOrDevelopment ? [RedisModule] : [];
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${process.env.NODE_ENV}` || '.env',
       validate: validateEnvironment,
     }),
     TypeOrmModule.forRootAsync({
