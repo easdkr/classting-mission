@@ -4,11 +4,13 @@ import { SchoolNewsService } from '@classting/school-news/usecase/services';
 import {
   FindManySchoolPageResponse,
   FindManySchoolNewsByIdResponse,
+  SubscribeSchoolPageResponse,
 } from '@classting/school-pages/presentation/dtos/responses';
-import { SchoolPageService } from '@classting/school-pages/usecase/services';
+import { SchoolPageService, SchoolPageSubscriptionService } from '@classting/school-pages/usecase/services';
+import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
-import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('School Pages')
@@ -19,6 +21,7 @@ export class SchoolPageController {
   public constructor(
     private readonly schoolPageService: SchoolPageService,
     private readonly schoolNewsService: SchoolNewsService,
+    private readonly schoolPageSubscriptionService: SchoolPageSubscriptionService,
   ) {}
 
   @Get()
@@ -48,5 +51,15 @@ export class SchoolPageController {
     });
 
     return FindManySchoolNewsByIdResponse.from(schoolNews, nextCursor);
+  }
+
+  @Post(':id/subscribe')
+  public async subscribe(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user: SessionUser,
+  ): Promise<SubscribeSchoolPageResponse> {
+    const subscriptionEntity = await this.schoolPageSubscriptionService.subscribe(user.id, id);
+
+    return SubscribeSchoolPageResponse.fromEntity(subscriptionEntity);
   }
 }

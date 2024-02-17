@@ -9,7 +9,7 @@ import { AppModule } from '@classting/app.module';
 import { initializeApplication } from '@libs/configs';
 import { UserService } from '@classting/users/usecase/services';
 import { memberUserFixture, roleFixture } from '@test/fixtures';
-import { SchoolPageEntity } from '@classting/school-pages/persistence/entities';
+import { SchoolPageEntity, SchoolPageSubscriptionEntity } from '@classting/school-pages/persistence/entities';
 import { City } from '@classting/school-pages/usecase/enums';
 import { SchoolNewsEntity } from '@classting/school-news/persistence/entities';
 
@@ -208,6 +208,35 @@ describe('SchoolPageController (e2e)', () => {
         expect(res.body.nextCursor).toBeUndefined();
         expect(res.body.items).toHaveLength(0);
       });
+    });
+  });
+
+  describe('POST /v1/school-pages/:id/subscribe', () => {
+    it('should subscribe', async () => {
+      // when
+      const res = await request(app.getHttpServer()).post('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.CREATED);
+      expect(res.body).toMatchObject({
+        userId: 1,
+        pageId: 1,
+      });
+
+      const subscription = await testDataSource.manager.findOne(SchoolPageSubscriptionEntity, {
+        where: { userId: 1, pageId: 1, cancelledAt: null },
+      });
+
+      expect(subscription).toBeDefined();
+    });
+
+    it('should throw ConflictException when already subscribed', async () => {
+      // when
+      const res = await request(app.getHttpServer()).post('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.CONFLICT);
+      expect(res.body.message).toEqual('Already subscribed');
     });
   });
 });
