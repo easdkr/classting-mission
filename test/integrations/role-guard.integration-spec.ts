@@ -4,11 +4,11 @@ import { DataSource } from 'typeorm';
 import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
 import { IBackup, IMemoryDb } from 'pg-mem';
 import { RoleEntity } from '@classting/users/persistence/entities';
-import { roleFixture, userFixture } from '@test/fixtures';
+import { adminUserFixture, roleFixture } from '@test/fixtures';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@classting/app.module';
 import { initializeApplication } from '@libs/configs';
-import { AuthGuard } from '@classting/auth/presentation/guards';
+import { RoleGuard } from '@classting/auth/presentation/guards';
 import { UserService } from '@classting/users/usecase/services';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { Role } from '@classting/auth/usecase/enums';
@@ -27,12 +27,12 @@ afterAll(async () => {
   await clearTest();
 });
 
-describe('AuthGuard (integration)', () => {
+describe('RoleGuard (integration)', () => {
   @Controller({ path: 'tests', version: '1' })
+  @UseRole(Role.ADMIN)
   class TestController {
     @Get()
-    @UseRole(Role.ADMIN)
-    @UseGuards(AuthGuard)
+    @UseGuards(RoleGuard)
     test() {
       return 'ok';
     }
@@ -89,8 +89,8 @@ async function setupFixture(ds: DataSource) {
   await ds.manager.save(RoleEntity, roleFixture);
   const userService = app.get<UserService>(UserService);
   await userService.create({
-    email: userFixture[0].email,
-    password: userFixture[0].password,
-    roleId: userFixture[0].roleId,
+    email: adminUserFixture[0].email,
+    password: adminUserFixture[0].password,
+    roleId: 1,
   });
 }

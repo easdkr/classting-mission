@@ -3,9 +3,15 @@ import { Exclude } from 'class-transformer';
 import { IsEmail, IsInt, Length, Matches } from 'class-validator';
 
 export class CreateUserBody {
+  /**
+   * @example test@email.com
+   */
   @IsEmail()
   public email: string;
 
+  /**
+   * @example Abc123!@#
+   */
   @Matches(
     /(?=.*[A-Za-z])(?=.*\d)(?=.*[`~!@#$%^&*()\-_=+{}\[\]\\|;:'",.<>/?])[A-Za-z\d`~!@#$%^&*()\-_=+{}\[\]\\|;:'",.<>/?]+/,
     {
@@ -15,6 +21,9 @@ export class CreateUserBody {
   @Length(6, 128)
   public password: string;
 
+  /**
+   * @example 1
+   */
   @IsInt()
   public roleId: number;
 

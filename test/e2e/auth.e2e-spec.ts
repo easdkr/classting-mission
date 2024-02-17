@@ -3,7 +3,7 @@ import { AppModule } from '@classting/app.module';
 import { RoleEntity } from '@classting/users/persistence/entities';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { roleFixture, userFixture } from '@test/fixtures';
+import { adminUserFixture, roleFixture } from '@test/fixtures';
 import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
 import { IMemoryDb, IBackup } from 'pg-mem';
 import { DataSource } from 'typeorm';
@@ -74,8 +74,8 @@ async function setupFixture(ds: DataSource) {
   await ds.manager.save(RoleEntity, roleFixture);
   const userService = app.get<UserService>(UserService);
   await userService.create({
-    email: userFixture[0].email,
-    password: userFixture[0].password,
-    roleId: userFixture[0].roleId,
+    email: adminUserFixture[0].email,
+    password: adminUserFixture[0].password,
+    roleId: adminUserFixture[0].roleId,
   });
 }

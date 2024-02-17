@@ -9,6 +9,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   port: +process.env.DATABASE_PORT,
+  host: process.env.DATABASE_HOST,
   entities: [entitiesPath],
   migrations: [migrationPath],
   logging: true,
