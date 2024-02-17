@@ -10,7 +10,7 @@ import { SchoolPageService, SchoolPageSubscriptionService } from '@classting/sch
 import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
-import { Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('School Pages')
@@ -61,5 +61,10 @@ export class SchoolPageController {
     const subscriptionEntity = await this.schoolPageSubscriptionService.subscribe(user.id, id);
 
     return SubscribeSchoolPageResponse.fromEntity(subscriptionEntity);
+  }
+
+  @Delete(':id/subscribe')
+  public async unsubscribe(@Param('id', ParseIntPipe) id: number, @User() user: SessionUser): Promise<boolean> {
+    return await this.schoolPageSubscriptionService.unsubscribe(user.id, id);
   }
 }
