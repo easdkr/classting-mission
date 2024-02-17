@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { createDatabase, createTestDataSource } from '@test/utils/test-datasource';
 import { IBackup, IMemoryDb } from 'pg-mem';
 import { RoleEntity } from '@classting/users/persistence/entities';
@@ -237,6 +237,31 @@ describe('SchoolPageController (e2e)', () => {
       // then
       expect(res.statusCode).toEqual(HttpStatus.CONFLICT);
       expect(res.body.message).toEqual('Already subscribed');
+    });
+  });
+
+  describe('DELETE /v1/school-pages/:id/subscribe', () => {
+    it('should unsubscribe', async () => {
+      // when
+      const res = await request(app.getHttpServer()).delete('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.OK);
+      expect(res.text).toEqual('true');
+
+      const subscription = await testDataSource.manager.findOne(SchoolPageSubscriptionEntity, {
+        where: { userId: 1, pageId: 1, cancelledAt: IsNull() },
+      });
+
+      expect(subscription).toBeNull();
+    });
+
+    it('should return false when not subscribed', async () => {
+      // when
+      const res = await request(app.getHttpServer()).delete('/v1/school-pages/1/subscribe').set('cookie', cookie);
+
+      // then
+      expect(res.statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
     });
   });
 });
