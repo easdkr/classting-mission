@@ -7,7 +7,7 @@ import { UseRole } from '@libs/decorators/role.decorator';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiConflictResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('School Pages')
+@ApiTags('School page (admin)')
 @UseRole(Role.ADMIN)
 @UseGuards(AuthGuard, RoleGuard)
 @Controller({ path: 'school-pages', version: '1' })

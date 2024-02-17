@@ -1,10 +1,19 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
+import { City } from '@classting/school-pages/usecase/enums';
 
 export class CreateSchoolPageResponse {
   public id: number;
   public name: string;
-  public city: string;
+  public city: City;
+
+  /**
+   * @example 2021-09-01T00:00:00.000Z
+   */
   public createdAt: string;
+
+  /**
+   * @example 2021-09-01T00:00:00.000Z
+   */
   public updatedAt: string;
 
   public constructor(params: CreateSchoolPageResponse) {

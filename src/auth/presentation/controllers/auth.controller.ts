@@ -3,7 +3,7 @@ import { LocalAuthGuard } from '@classting/auth/presentation/guards';
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
   public constructor() {}

@@ -1,12 +1,13 @@
 import { SchoolPageEntity } from '@classting/school-pages/persistence/entities/school-page.entity';
+import { City } from '@classting/school-pages/usecase/enums';
 import { ApiCursorResponse } from '@libs/types';
 
 export class FindManySchoolPageResponseItem {
   public id: number;
-  public city: string;
+  public city: City;
   public name: string;
 
-  public constructor(id: number, city: string, name: string) {
+  public constructor(id: number, city: City, name: string) {
     this.id = id;
     this.city = city;
     this.name = name;

@@ -6,7 +6,9 @@ import { SessionUser, User } from '@libs/decorators';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { OptionalParseIntPipe } from '@libs/pipes';
 import { Controller, Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('School news (member)')
 @Controller({ path: 'school-news', version: '1' })
 @UseGuards(AuthGuard, RoleGuard)
 @UseRole(Role.MEMBER)

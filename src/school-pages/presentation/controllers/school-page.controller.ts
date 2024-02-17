@@ -15,7 +15,7 @@ import { OptionalParseIntPipe } from '@libs/pipes';
 import { Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiConflictResponse, ApiQuery, ApiTags, ApiUnprocessableEntityResponse } from '@nestjs/swagger';
 
-@ApiTags('School Pages')
+@ApiTags('School page (member)')
 @UseRole(Role.MEMBER)
 @UseGuards(AuthGuard, RoleGuard)
 @Controller({ path: 'school-pages', version: '1' })
