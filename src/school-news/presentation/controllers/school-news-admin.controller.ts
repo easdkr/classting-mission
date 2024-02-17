@@ -1,8 +1,7 @@
 import { AuthGuard, RoleGuard } from '@classting/auth/presentation/guards';
 import { Role } from '@classting/auth/usecase/enums';
 import { CreateSchoolNewsBody, UpdateSchoolNewsBody } from '@classting/school-news/presentation/dtos/requests';
-import { CreateSchoolNewsResponse } from '@classting/school-news/presentation/dtos/responses';
-import { UpdateSchoolNewsResponse } from '@classting/school-news/presentation/dtos/responses/update-school-news.response';
+import { CreateSchoolNewsResponse, UpdateSchoolNewsResponse } from '@classting/school-news/presentation/dtos/responses';
 import { SchoolNewsService } from '@classting/school-news/usecase/services';
 import { UseRole } from '@libs/decorators/role.decorator';
 import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';

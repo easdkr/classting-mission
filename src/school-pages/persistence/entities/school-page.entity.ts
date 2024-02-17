@@ -1,6 +1,7 @@
+import { SchoolPageSubscriptionEntity } from '@classting/school-pages/persistence/entities/school-page-subscription.entity';
 import { City } from '@classting/school-pages/usecase/enums';
 import { BaseEntity } from '@libs/database/entities';
-import { Column, Entity, Unique } from 'typeorm';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 
 interface ISchoolPage {
   city: City;
@@ -11,10 +12,13 @@ interface ISchoolPage {
 @Unique(['city', 'name'])
 export class SchoolPageEntity extends BaseEntity {
   @Column()
-  city: City;
+  public city: City;
 
   @Column()
-  name: string;
+  public name: string;
+
+  @OneToMany(() => SchoolPageSubscriptionEntity, (subscription) => subscription.page)
+  public subscriptions: SchoolPageSubscriptionEntity[];
 
   public static from(params: ISchoolPage) {
     const entity = new SchoolPageEntity();
