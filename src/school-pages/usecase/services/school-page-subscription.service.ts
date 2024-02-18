@@ -31,7 +31,7 @@ export class SchoolPageSubscriptionService {
     return await subscription
       .map((v) => {
         if (v.isCancelled()) {
-          v.cancelledAt = null;
+          v.reSubscribe();
         } else {
           throw new ConflictException('Already subscribed');
         }
